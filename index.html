@@ -2,324 +2,212 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Skin & Mind">
-<meta name="theme-color" content="#f5f0eb">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Skin & Mind</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="apple-touch-icon" href="image.png">
-<link rel="icon" href="image.png">
+
 <style>
-  :root {
-    --bg: #f5f0eb;
-    --surface: #fffdf9;
-    --border: rgba(0,0,0,0.08);
-    --border-md: rgba(0,0,0,0.14);
-    --text: #1a1714;
-    --text-muted: #7a7068;
-    --text-faint: #b0a89e;
-    --accent: #c17b4e;
-    --accent-light: #f5e8dc;
-    --success: #4a8c5c;
-    --success-light: #e8f4ec;
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); overflow-x: hidden; }
-  body { max-width: 430px; margin: 0 auto; position: relative; }
+:root {
+  --bg: #e6a1b3; /* your pink */
+  --surface: #ffffff;
+  --text: #000000;
+  --border: rgba(0,0,0,0.1);
+  --radius: 14px;
+}
 
-  /* header */
-  .header { padding: 20px 24px 20px; background: var(--bg); position: sticky; top: 0; z-index: 10; }
-  .header-row { display: flex; justify-content: space-between; align-items: center; }
-  .today-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.02em; }
-  .streak-pill { background: var(--accent-light); color: var(--accent); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
+body {
+  margin:0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  max-width: 430px;
+  margin: auto;
+}
 
-  /* tabs */
-  .tabs { display: flex; gap: 4px; padding: 0 24px 16px; }
-  .tab { flex: 1; padding: 9px; font-size: 13px; font-weight: 500; color: var(--text-muted); background: transparent; border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
-  .tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.header {
+  padding:20px;
+  font-weight:600;
+}
 
-  /* scroll area */
-  .scroll { padding: 0 24px 100px; overflow-y: auto; }
+.tabs {
+  display:flex;
+  gap:5px;
+  padding:10px;
+}
 
-  /* cards */
-  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; }
-  .card-title { font-size: 11px; font-weight: 500; color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+.tab {
+  flex:1;
+  padding:10px;
+  border:1px solid var(--border);
+  background:white;
+  cursor:pointer;
+}
 
-  /* progress */
-  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--success); border-radius: 2px; transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  .prog-text { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+.tab.active {
+  background:black;
+  color:white;
+}
 
-  /* step items */
-  .step { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
-  .step:last-child { border-bottom: none; padding-bottom: 0; }
-  .step:first-child { padding-top: 0; }
-  .step:active { opacity: 0.6; }
-  .cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
-  .cb.on { background: var(--success); border-color: var(--success); }
-  .cb svg { opacity: 0; transition: opacity 0.15s; }
-  .cb.on svg { opacity: 1; }
-  .step-info { flex: 1; }
-  .step-name { font-size: 15px; color: var(--text); }
-  .step-sub { font-size: 12px; color: var(--text-faint); margin-top: 1px; }
+.page { display:none; padding:10px; }
+.page.active { display:block; }
 
-  /* mood */
-  .mood-row { display: flex; gap: 6px; margin-bottom: 14px; }
-  .mood-btn { flex: 1; padding: 10px 4px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; text-align: center; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
-  .mood-btn:active { transform: scale(0.95); }
-  .mood-btn.on { border-color: var(--accent); background: var(--accent-light); }
-  .mood-emoji { font-size: 20px; display: block; }
-  .mood-label { font-size: 10px; color: var(--text-muted); margin-top: 3px; display: block; }
-  .mood-btn.on .mood-label { color: var(--accent); }
+.card {
+  background:var(--surface);
+  padding:15px;
+  border-radius:var(--radius);
+  margin-bottom:10px;
+}
 
-  /* slider */
-  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-  .slider-label { font-size: 13px; color: var(--text-muted); min-width: 72px; }
-  .slider-row input[type=range] { flex: 1; -webkit-appearance: none; height: 3px; background: var(--border-md); border-radius: 2px; outline: none; }
-  .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--text); cursor: pointer; }
-  .slider-val { font-size: 15px; font-weight: 500; min-width: 28px; text-align: right; }
+input, textarea {
+  width:100%;
+  margin-top:8px;
+  padding:10px;
+}
 
-  /* notes */
-  .notes { width: 100%; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; font-size: 14px; color: var(--text); background: var(--bg); resize: none; height: 80px; font-family: 'DM Sans', sans-serif; outline: none; margin-top: 4px; }
-  .notes::placeholder { color: var(--text-faint); }
-  .notes:focus { border-color: var(--border-md); }
-  .field-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+button {
+  margin-top:10px;
+  padding:12px;
+  width:100%;
+  background:black;
+  color:white;
+  border:none;
+}
 
-  /* save btn */
-  .save-btn { width: calc(100% - 48px); position: fixed; bottom: 24px; left: 24px; padding: 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s, transform 0.15s; letter-spacing: 0.01em; }
-  .save-btn:active { opacity: 0.8; transform: scale(0.98); }
-  .save-btn.saved { background: var(--success); }
-
-  /* stats */
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-  .stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px 10px; text-align: center; }
-  .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); }
-  .stat-label { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
-
-  /* log entries */
-  .log-entry { padding: 14px 0; border-bottom: 0.5px solid var(--border); }
-  .log-entry:last-child { border-bottom: none; }
-  .log-date { font-size: 12px; color: var(--text-faint); margin-bottom: 6px; }
-  .log-main { display: flex; justify-content: space-between; align-items: center; }
-  .log-steps { font-size: 14px; color: var(--text); }
-  .log-conf { font-size: 13px; color: var(--text-muted); }
-  .log-note { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-style: italic; }
-  .log-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; background: var(--bg); border: 0.5px solid var(--border); color: var(--text-muted); }
-
-  .empty { text-align: center; padding: 40px 0; color: var(--text-faint); font-size: 14px; }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* conf bar visual */
-  .conf-visual { display: flex; gap: 3px; margin-top: 8px; }
-  .conf-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.2s; }
-  .conf-dot.filled { background: var(--accent); }
+.product {
+  padding:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
-<div class="header">
-  <div class="header-row">
-    <img src="image.png" alt="Skin & Mind" style="height: 40px;">
-    <div class="streak-pill" id="streak-pill">0 day streak</div>
-  </div>
-  <div class="today-date" id="today-date"></div>
-</div>
+
+<div class="header">Skin & Mind</div>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('today')">Today</button>
-  <button class="tab" onclick="switchTab('log')">My Log</button>
+  <button class="tab" onclick="switchTab('products')">Products</button>
 </div>
 
-<div class="scroll">
-  <div id="page-today" class="page active">
-    <div class="card">
-      <div class="card-title">Morning routine</div>
-      <div class="prog-bar"><div class="prog-fill" id="am-fill" style="width:0%"></div></div>
-      <div class="prog-text" id="am-text">0 of 3 done</div>
-      <div id="am-steps"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Night routine</div>
-      <div class="prog-bar"><div class="prog-fill" id="pm-fill" style="width:0%"></div></div>
-      <div class="prog-text" id="pm-text">0 of 3 done</div>
-      <div id="pm-steps"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">How are you feeling today?</div>
-      <div class="mood-row" id="mood-grid"></div>
-      <div class="slider-row">
-        <span class="slider-label">Confidence</span>
-        <input type="range" min="1" max="10" value="5" step="1" id="conf-slider">
-        <span class="slider-val" id="conf-val">5</span>
-      </div>
-      <div class="conf-visual" id="conf-dots"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Skin condition</div>
-      <div class="mood-row" id="skin-grid"></div>
-    </div>
-
-    <div class="card">
-      <div class="field-label">Notes (optional)</div>
-      <textarea class="notes" id="notes-input" placeholder="anything on your mind today..."></textarea>
-    </div>
-  </div>
-
-  <div id="page-log" class="page">
-    <div class="stats-grid">
-      <div class="stat"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">day streak</div></div>
-      <div class="stat"><div class="stat-num" id="stat-avg">—</div><div class="stat-label">avg confidence</div></div>
-      <div class="stat"><div class="stat-num" id="stat-days">0</div><div class="stat-label">days logged</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Past entries</div>
-      <div id="log-list"><div class="empty">No entries yet</div></div>
-    </div>
+<!-- TODAY -->
+<div id="page-today" class="page active">
+  <div class="card">
+    <p>Track your day here (your original stuff stays)</p>
   </div>
 </div>
 
-<button class="save-btn" id="save-btn" onclick="saveEntry()">Save today</button>
+<!-- PRODUCTS -->
+<div id="page-products" class="page">
+  <div class="card">
+    <h3>Your products</h3>
+    <div id="product-list"></div>
+  </div>
+
+  <div class="card">
+    <h3>Add product</h3>
+
+    <input id="name" placeholder="Product name">
+
+    <textarea id="ingredients" placeholder="Ingredients (comma separated)"></textarea>
+
+    <textarea id="pros" placeholder="Pros auto-fill"></textarea>
+    <textarea id="cons" placeholder="Cons auto-fill"></textarea>
+
+    <button onclick="addProduct()">Add Product</button>
+  </div>
+</div>
 
 <script>
-const AM_STEPS = [
-  {name:'Cleanser', sub:'gentle face wash — 60 sec'},
-  {name:'Vitamin C serum', sub:'apply evenly, wait 30 sec'},
-  {name:'Moisturiser + SPF', sub:'don\'t skip the sunscreen'}
-];
-const PM_STEPS = [
-  {name:'Cleanser', sub:'remove the day properly'},
-  {name:'Hyaluronic acid serum', sub:'apply to damp skin'},
-  {name:'Moisturiser', sub:'lock in hydration overnight'}
-];
-const MOODS = [['😔','Low'],['😐','Okay'],['🙂','Good'],['😊','Great'],['🤩','Amazing']];
-const SKIN  = [['🔴','Bad'],['🟠','Meh'],['🟡','Ok'],['🟢','Good'],['⭐','Clear']];
+// SMART INGREDIENT DATABASE
+const DB = {
+  "niacinamide": {pros:"Reduces oil, helps acne", cons:"Can irritate"},
+  "salicylic acid": {pros:"Clears pores", cons:"Can dry skin"},
+  "hyaluronic acid": {pros:"Hydrates skin", cons:"Needs moisture"},
+  "vitamin c": {pros:"Brightens skin", cons:"Can irritate"}
+};
 
-let state = { am:[false,false,false], pm:[false,false,false], mood:null, skin:null, conf:5, notes:'' };
-let entries = [];
-try { entries = JSON.parse(localStorage.getItem('skinmind_v2')||'[]'); } catch(e){}
+// LOAD
+let products = JSON.parse(localStorage.getItem("products") || "[]");
 
-function renderSteps(steps, arr, prefix, fillId, textId) {
-  const el = document.getElementById(prefix+'-steps');
-  el.innerHTML = '';
-  steps.forEach((s,i) => {
-    const d = document.createElement('div');
-    d.className = 'step';
-    d.innerHTML = `<div class="cb${arr[i]?' on':''}" id="${prefix}-cb-${i}"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-info"><div class="step-name">${s.name}</div><div class="step-sub">${s.sub}</div></div>`;
-    d.onclick = () => { arr[i] = !arr[i]; renderSteps(steps, arr, prefix, fillId, textId); };
-    el.appendChild(d);
+// SWITCH TABS
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach((t,i)=>{
+    t.classList.toggle("active", (tab==="today"&&i===0)||(tab==="products"&&i===1));
   });
-  const done = arr.filter(Boolean).length;
-  document.getElementById(fillId).style.width = Math.round(done/steps.length*100)+'%';
-  document.getElementById(textId).textContent = done+' of '+steps.length+' done';
+
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+tab).classList.add("active");
+
+  if(tab==="products") renderProducts();
 }
 
-function renderMoods() {
-  ['mood','skin'].forEach(type => {
-    const grid = document.getElementById(type+'-grid');
-    const arr = type==='mood' ? MOODS : SKIN;
-    const sel = type==='mood' ? state.mood : state.skin;
-    grid.innerHTML = '';
-    arr.forEach(([emoji,label],i) => {
-      const b = document.createElement('button');
-      b.className = 'mood-btn'+(sel===i?' on':'');
-      b.innerHTML = `<span class="mood-emoji">${emoji}</span><span class="mood-label">${label}</span>`;
-      b.onclick = () => { if(type==='mood') state.mood=i; else state.skin=i; renderMoods(); };
-      grid.appendChild(b);
-    });
+// AUTO FILL
+document.getElementById("ingredients").oninput = function() {
+  const list = this.value.split(",").map(i=>i.trim().toLowerCase());
+
+  let pros=[], cons=[];
+
+  list.forEach(i=>{
+    if(DB[i]){
+      pros.push(DB[i].pros);
+      cons.push(DB[i].cons);
+    }
   });
+
+  document.getElementById("pros").value = [...new Set(pros)].join(", ");
+  document.getElementById("cons").value = [...new Set(cons)].join(", ");
+};
+
+// ADD PRODUCT
+function addProduct(){
+  const p = {
+    id: Date.now(),
+    name: document.getElementById("name").value,
+    ingredients: document.getElementById("ingredients").value.split(","),
+    pros: document.getElementById("pros").value,
+    cons: document.getElementById("cons").value
+  };
+
+  products.unshift(p);
+  localStorage.setItem("products", JSON.stringify(products));
+
+  renderProducts();
 }
 
-function renderConfDots() {
-  const v = parseInt(document.getElementById('conf-slider').value);
-  const el = document.getElementById('conf-dots');
-  el.innerHTML = '';
-  for(let i=1;i<=10;i++) {
-    const d = document.createElement('div');
-    d.className = 'conf-dot'+(i<=v?' filled':'');
-    el.appendChild(d);
-  }
-}
+// RENDER
+function renderProducts(){
+  const list = document.getElementById("product-list");
+  list.innerHTML="";
 
-function saveEntry() {
-  const today = new Date().toISOString().split('T')[0];
-  const conf = parseInt(document.getElementById('conf-slider').value);
-  const notes = document.getElementById('notes-input').value.trim();
-  const entry = { date:today, am:[...state.am], pm:[...state.pm], mood:state.mood, skin:state.skin, conf, notes };
-  const idx = entries.findIndex(e=>e.date===today);
-  if(idx>=0) entries[idx]=entry; else entries.unshift(entry);
-  try { localStorage.setItem('skinmind_v2', JSON.stringify(entries)); } catch(e){}
-  renderLog();
-  const btn = document.getElementById('save-btn');
-  btn.textContent = 'Saved!';
-  btn.classList.add('saved');
-  setTimeout(()=>{ btn.textContent='Save today'; btn.classList.remove('saved'); }, 2000);
-}
-
-function renderLog() {
-  if(!entries.length) {
-    document.getElementById('log-list').innerHTML = '<div class="empty">Complete your first day to see your log</div>';
-    document.getElementById('stat-avg').textContent = '—';
-    document.getElementById('stat-days').textContent = '0';
-    document.getElementById('stat-streak').textContent = '0';
-    document.getElementById('streak-pill').textContent = '0 day streak';
+  if(products.length===0){
+    list.innerHTML="No products yet";
     return;
   }
-  const list = document.getElementById('log-list');
-  list.innerHTML = '';
-  entries.slice(0,30).forEach(e => {
-    const amDone = e.am.filter(Boolean).length;
-    const pmDone = e.pm.filter(Boolean).length;
-    const moodLabel = e.mood!==null ? MOODS[e.mood][0]+' '+MOODS[e.mood][1] : '';
-    const skinLabel = e.skin!==null ? SKIN[e.skin][0]+' '+SKIN[e.skin][1] : '';
-    const d = document.createElement('div');
-    d.className = 'log-entry';
-    const dateStr = new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
-    d.innerHTML = `<div class="log-date">${dateStr}</div><div class="log-main"><span class="log-steps">AM ${amDone}/3 &middot; PM ${pmDone}/3</span><span class="log-conf">Confidence ${e.conf}/10</span></div><div class="log-badges">${moodLabel?`<span class="badge">${moodLabel}</span>`:''}${skinLabel?`<span class="badge">Skin: ${skinLabel}</span>`:''}</div>${e.notes?`<div class="log-note">"${e.notes}"</div>`:''}`;
+
+  products.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="product";
+    d.innerText=p.name;
+
+    d.onclick=()=>showProduct(p);
+
     list.appendChild(d);
   });
-  const avg = (entries.reduce((s,e)=>s+e.conf,0)/entries.length).toFixed(1);
-  document.getElementById('stat-avg').textContent = avg;
-  document.getElementById('stat-days').textContent = entries.length;
-  let streak = 0;
-  const now = new Date(); now.setHours(12,0,0,0);
-  for(let i=0;i<entries.length;i++) {
-    const d = new Date(entries[i].date+'T12:00:00');
-    const diff = Math.round((now-d)/(1000*60*60*24));
-    if(diff===i) streak++; else break;
-  }
-  document.getElementById('stat-streak').textContent = streak;
-  document.getElementById('streak-pill').textContent = streak+' day streak';
 }
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', (tab==='today'&&i===0)||(tab==='log'&&i===1)));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');
-  document.getElementById('save-btn').style.display = tab==='today'?'block':'none';
-  if(tab==='log') renderLog();
+// VIEW PRODUCT
+function showProduct(p){
+  alert(
+    p.name + "\n\n" +
+    "Ingredients:\n" + p.ingredients.join(", ") + "\n\n" +
+    "Pros:\n" + p.pros + "\n\n" +
+    "Cons:\n" + p.cons
+  );
 }
 
-document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
-document.getElementById('conf-slider').oninput = function() {
-  state.conf = parseInt(this.value);
-  document.getElementById('conf-val').textContent = this.value;
-  renderConfDots();
-};
-document.getElementById('notes-input').oninput = function() { state.notes = this.value; };
-
-renderSteps(AM_STEPS, state.am, 'am', 'am-fill', 'am-text');
-renderSteps(PM_STEPS, state.pm, 'pm', 'pm-fill', 'pm-text');
-renderMoods();
-renderConfDots();
-renderLog();
+// INIT
+renderProducts();
 </script>
+
 </body>
 </html>
