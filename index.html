@@ -141,7 +141,8 @@
 <div class="tabs">
   <button class="tab active" onclick="switchTab('today')">Today</button>
   <button class="tab" onclick="switchTab('products')">Products</button>
-  <button class="tab" onclick="switchTab('log')">My Log</button>
+  <button class="tab" onclick="switchTab('reminders')">Reminders</button>
+  <button class="tab" onclick="switchTab('log')">Log</button>
 </div>
 <div class="scroll">
   <div id="page-today" class="page active">
@@ -185,6 +186,41 @@
       <div class="prod-filter" id="prod-filter"></div>
       <div class="prod-count" id="prod-count"></div>
       <div id="prod-list"></div>
+    </div>
+  </div>
+
+  <div id="page-reminders" class="page">
+    <div class="card">
+      <div class="card-title">Notification reminders</div>
+      <div id="notif-permission-banner" style="display:none;background:var(--accent-light);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--accent);line-height:1.5;"></div>
+      <button class="prod-add-btn" id="notif-enable-btn" onclick="requestNotifPermission()" style="margin-bottom:6px;">🔔 Enable browser notifications</button>
+      <div id="notif-status" style="font-size:12px;color:var(--text-faint);margin-bottom:16px;text-align:center;"></div>
+
+      <div style="margin-bottom:20px;">
+        <div class="field-label" style="margin-bottom:10px;font-size:13px;font-weight:500;color:var(--text-muted);">Add a reminder</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <select id="r-routine" onchange="toggleCustomInput()" style="flex:1.4;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
+            <option value="Morning routine">🌅 Morning routine</option>
+            <option value="Night routine">🌙 Night routine</option>
+            <option value="Apply SPF">☀️ Apply SPF</option>
+            <option value="Change pillowcase">🛏️ Change pillowcase</option>
+            <option value="Drink water">💧 Drink water</option>
+            <option value="Custom">✏️ Custom...</option>
+          </select>
+          <input type="time" id="r-time" value="22:00" style="flex:1;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
+        </div>
+        <div id="r-custom-wrap" style="display:none;margin-bottom:8px;">
+          <input type="text" id="r-custom" placeholder="e.g. Use face mask tonight" style="width:100%;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Repeat on</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;" id="r-days-row"></div>
+        </div>
+        <button onclick="addReminder()" style="width:100%;padding:13px;background:var(--text);color:var(--surface);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Add reminder</button>
+      </div>
+
+      <div class="card-title" style="margin-bottom:10px;">Your reminders</div>
+      <div id="reminder-list"><div class="empty">No reminders set yet</div></div>
     </div>
   </div>
 
@@ -655,14 +691,189 @@ function switchTab(tab){
   const tabs=document.querySelectorAll('.tab');
   tabs[0].classList.toggle('active',tab==='today');
   tabs[1].classList.toggle('active',tab==='products');
-  tabs[2].classList.toggle('active',tab==='log');
+  tabs[2].classList.toggle('active',tab==='reminders');
+  tabs[3].classList.toggle('active',tab==='log');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
   document.getElementById('save-btn').style.display=tab==='today'?'block':'none';
   if(tab==='log')renderLog();
   if(tab==='products'){renderFilterBtns();renderProducts();}
+  if(tab==='reminders'){renderReminderPage();renderReminderList();}
 }
 
+// ── REMINDERS ──
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let reminders=[];
+let reminderTimers=[];
+try{reminders=JSON.parse(localStorage.getItem('skinmind_reminders')||'[]');}catch(e){}
+
+function saveReminders(){try{localStorage.setItem('skinmind_reminders',JSON.stringify(reminders));}catch(e){}}
+
+function renderReminderPage(){
+  // days row
+  const row=document.getElementById('r-days-row');
+  if(!row.children.length){
+    DAYS.forEach((d,i)=>{
+      const b=document.createElement('button');
+      b.id='rd-'+i;
+      b.textContent=d;
+      b.style.cssText='padding:6px 10px;border:0.5px solid var(--border-md);border-radius:20px;font-size:12px;font-weight:500;color:var(--text-muted);background:var(--surface-2);cursor:pointer;font-family:"DM Sans",sans-serif;transition:all 0.15s;';
+      b.onclick=()=>{
+        b.dataset.on=b.dataset.on==='1'?'0':'1';
+        b.style.background=b.dataset.on==='1'?'var(--text)':'var(--surface-2)';
+        b.style.color=b.dataset.on==='1'?'var(--surface)':'var(--text-muted)';
+        b.style.borderColor=b.dataset.on==='1'?'var(--text)':'var(--border-md)';
+      };
+      row.appendChild(b);
+    });
+  }
+  // notification status
+  updateNotifUI();
+}
+
+function updateNotifUI(){
+  const status=document.getElementById('notif-status');
+  const btn=document.getElementById('notif-enable-btn');
+  const banner=document.getElementById('notif-permission-banner');
+  if(!('Notification' in window)){
+    status.textContent='Your browser does not support notifications.';
+    btn.style.display='none';
+    return;
+  }
+  if(Notification.permission==='granted'){
+    status.textContent='✓ Notifications enabled';
+    btn.style.display='none';
+    banner.style.display='none';
+  } else if(Notification.permission==='denied'){
+    status.textContent='';
+    btn.style.display='none';
+    banner.style.display='block';
+    banner.textContent='Notifications are blocked. To enable them, click the 🔒 lock icon in your browser\'s address bar, set Notifications to "Allow", then reload the page.';
+  } else {
+    status.textContent='Tap the button above to allow notifications.';
+    btn.style.display='block';
+    banner.style.display='none';
+  }
+}
+
+function requestNotifPermission(){
+  if(!('Notification' in window)) return;
+  Notification.requestPermission().then(()=>{
+    updateNotifUI();
+    if(Notification.permission==='granted') scheduleAll();
+  });
+}
+
+function toggleCustomInput(){
+  const sel=document.getElementById('r-routine');
+  document.getElementById('r-custom-wrap').style.display=sel.value==='Custom'?'block':'none';
+}
+
+function addReminder(){
+  const sel=document.getElementById('r-routine');
+  const label=sel.value==='Custom'?(document.getElementById('r-custom').value.trim()||'Reminder'):sel.value;
+  const time=document.getElementById('r-time').value;
+  if(!time){alert('Please set a time.');return;}
+  const days=DAYS.map((_,i)=>document.getElementById('rd-'+i)?.dataset.on==='1');
+  const everyDay=days.every(d=>!d);
+  const r={id:'rem'+Date.now(),label,time,days:everyDay?DAYS.map(()=>true):days,enabled:true};
+  reminders.push(r);
+  saveReminders();
+  scheduleAll();
+  renderReminderList();
+  // reset day buttons
+  DAYS.forEach((_,i)=>{
+    const b=document.getElementById('rd-'+i);
+    if(b){b.dataset.on='0';b.style.background='var(--surface-2)';b.style.color='var(--text-muted)';b.style.borderColor='var(--border-md)';}
+  });
+  document.getElementById('r-custom').value='';
+  sel.value='Morning routine';
+  toggleCustomInput();
+}
+
+function deleteReminder(id){
+  reminders=reminders.filter(r=>r.id!==id);
+  saveReminders();scheduleAll();renderReminderList();
+}
+
+function toggleReminder(id){
+  const r=reminders.find(x=>x.id===id);
+  if(r){r.enabled=!r.enabled;saveReminders();scheduleAll();renderReminderList();}
+}
+
+function renderReminderList(){
+  const list=document.getElementById('reminder-list');
+  if(!reminders.length){list.innerHTML='<div class="empty">No reminders set yet</div>';return;}
+  list.innerHTML='';
+  reminders.forEach(r=>{
+    const el=document.createElement('div');
+    el.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--border);gap:10px;';
+    const activeDays=DAYS.filter((_,i)=>r.days[i]);
+    const dayStr=activeDays.length===7?'Every day':activeDays.join(', ');
+    const [hh,mm]=r.time.split(':');
+    const h=parseInt(hh);
+    const ampm=h>=12?'PM':'AM';
+    const h12=h===0?12:h>12?h-12:h;
+    const timeStr=`${h12}:${mm} ${ampm}`;
+    el.innerHTML=`
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:15px;font-weight:500;color:${r.enabled?'var(--text)':'var(--text-faint)'};">${r.label}</div>
+        <div style="font-size:12px;color:var(--text-faint);margin-top:2px;">${timeStr} · ${dayStr}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+        <button onclick="toggleReminder('${r.id}')" style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:0.5px solid var(--border-md);background:${r.enabled?'var(--text)':'var(--surface-2)'};color:${r.enabled?'var(--surface)':'var(--text-muted)'};">${r.enabled?'On':'Off'}</button>
+        <button onclick="deleteReminder('${r.id}')" style="padding:6px 10px;border-radius:20px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;background:var(--accent-light);color:var(--accent);">✕</button>
+      </div>`;
+    list.appendChild(el);
+  });
+  // remove last border
+  if(list.lastChild) list.lastChild.style.borderBottom='none';
+}
+
+function scheduleAll(){
+  reminderTimers.forEach(t=>clearTimeout(t));
+  reminderTimers=[];
+  if(Notification.permission!=='granted') return;
+  reminders.filter(r=>r.enabled).forEach(r=>{
+    scheduleSingle(r);
+  });
+}
+
+function scheduleSingle(r){
+  const now=new Date();
+  const [hh,mm]=r.time.split(':');
+  const next=new Date();
+  next.setHours(parseInt(hh),parseInt(mm),0,0);
+
+  function fireIfDay(date){
+    const dow=date.getDay();
+    return r.days[dow];
+  }
+
+  function schedule(){
+    const n=new Date();
+    n.setHours(parseInt(hh),parseInt(mm),0,0);
+    if(n<=new Date()) n.setDate(n.getDate()+1);
+    // find the next matching day
+    for(let i=0;i<7;i++){
+      if(fireIfDay(n)) break;
+      n.setDate(n.getDate()+1);
+    }
+    const delay=n-new Date();
+    const t=setTimeout(()=>{
+      new Notification('Skin & Mind 🌸',{
+        body:r.label,
+        icon:'',
+        badge:''
+      });
+      schedule(); // reschedule for next occurrence
+    },delay);
+    reminderTimers.push(t);
+  }
+  schedule();
+}
+
+// ── INIT ──
 document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
 document.getElementById('conf-slider').oninput=function(){state.conf=parseInt(this.value);document.getElementById('conf-val').textContent=this.value;renderConfDots();};
 document.getElementById('notes-input').oninput=function(){state.notes=this.value;};
@@ -671,6 +882,8 @@ document.getElementById('modal-backdrop').onclick=function(e){if(e.target===this
 renderSteps(AM_STEPS,state.am,'am','am-fill','am-text');
 renderSteps(PM_STEPS,state.pm,'pm','pm-fill','pm-text');
 renderMoods();renderConfDots();renderLog();
+// Auto-schedule saved reminders on load
+if(Notification.permission==='granted') scheduleAll();
 </script>
 </body>
 </html>
