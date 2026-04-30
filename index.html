@@ -4,244 +4,375 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Skin & Mind">
 <meta name="theme-color" content="#f2b8c6">
 <title>Skin & Mind</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f5c2cf;
-    --surface: #fde8ee;
-    --surface-2: #fdf0f4;
-    --border: rgba(0,0,0,0.10);
-    --border-md: rgba(0,0,0,0.18);
-    --text: #111111;
-    --text-muted: #4a2030;
-    --text-faint: #a06070;
-    --accent: #c0002a;
-    --accent-light: #fbd0d8;
-    --success: #1a6640;
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); overflow-x: hidden; }
-  body { max-width: 430px; margin: 0 auto; position: relative; }
-  .header { padding: 20px 24px 16px; background: var(--bg); position: sticky; top: 0; z-index: 10; border-bottom: 0.5px solid var(--border); }
-  .header-row { display: flex; justify-content: space-between; align-items: center; }
-  .app-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); }
-  .today-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-  .streak-pill { background: var(--text); color: var(--bg); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
-  .tabs { display: flex; gap: 4px; padding: 14px 24px 0; }
-  .tab { flex: 1; padding: 9px 4px; font-size: 13px; font-weight: 500; color: var(--text-muted); background: transparent; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
-  .tab.active { background: var(--text); color: var(--surface); border-color: var(--text); }
-  .scroll { padding: 16px 24px 100px; overflow-y: auto; }
-  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; }
-  .card-title { font-size: 11px; font-weight: 500; color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
-  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--success); border-radius: 2px; transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  .prog-text { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
-  .step { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
-  .step:last-child { border-bottom: none; padding-bottom: 0; }
-  .step:first-child { padding-top: 0; }
-  .step:active { opacity: 0.6; }
-  .cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
-  .cb.on { background: var(--success); border-color: var(--success); }
-  .cb svg { opacity: 0; transition: opacity 0.15s; }
-  .cb.on svg { opacity: 1; }
-  .step-info { flex: 1; }
-  .step-name { font-size: 15px; color: var(--text); }
-  .step-sub { font-size: 12px; color: var(--text-faint); margin-top: 1px; }
-  .mood-row { display: flex; gap: 6px; margin-bottom: 14px; }
-  .mood-btn { flex: 1; padding: 10px 4px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); cursor: pointer; text-align: center; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
-  .mood-btn:active { transform: scale(0.95); }
-  .mood-btn.on { border-color: var(--text); background: var(--accent-light); }
-  .mood-emoji { font-size: 20px; display: block; }
-  .mood-label { font-size: 10px; color: var(--text-muted); margin-top: 3px; display: block; }
-  .mood-btn.on .mood-label { color: var(--text); font-weight: 500; }
-  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-  .slider-label { font-size: 13px; color: var(--text-muted); min-width: 72px; }
-  .slider-row input[type=range] { flex: 1; -webkit-appearance: none; height: 3px; background: var(--border-md); border-radius: 2px; outline: none; }
-  .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--text); cursor: pointer; }
-  .slider-val { font-size: 15px; font-weight: 500; min-width: 28px; text-align: right; }
-  .notes { width: 100%; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); padding: 12px; font-size: 14px; color: var(--text); background: var(--surface-2); resize: none; height: 80px; font-family: 'DM Sans', sans-serif; outline: none; margin-top: 4px; }
-  .notes::placeholder { color: var(--text-faint); }
-  .field-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .save-btn { width: calc(100% - 48px); position: fixed; bottom: 24px; left: 24px; padding: 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s, transform 0.15s; }
-  .save-btn:active { opacity: 0.8; transform: scale(0.98); }
-  .save-btn.saved { background: var(--success); color: white; }
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-  .stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px 10px; text-align: center; }
-  .stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); }
-  .stat-label { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
-  .log-entry { padding: 14px 0; border-bottom: 0.5px solid var(--border); }
-  .log-entry:last-child { border-bottom: none; }
-  .log-date { font-size: 12px; color: var(--text-faint); margin-bottom: 6px; }
-  .log-main { display: flex; justify-content: space-between; align-items: center; }
-  .log-steps { font-size: 14px; color: var(--text); }
-  .log-conf { font-size: 13px; color: var(--text-muted); }
-  .log-note { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-style: italic; }
-  .log-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; background: var(--accent-light); border: 0.5px solid var(--border); color: var(--text-muted); }
-  .empty { text-align: center; padding: 40px 0; color: var(--text-faint); font-size: 14px; }
-  .page { display: none; }
-  .page.active { display: block; }
-  .conf-visual { display: flex; gap: 3px; margin-top: 8px; }
-  .conf-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); }
-  .conf-dot.filled { background: var(--accent); }
-  .prod-add-btn { width: 100%; padding: 13px; background: var(--text); color: var(--surface); border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-bottom: 12px; }
-  .prod-add-btn:active { opacity: 0.75; }
-  .prod-search { width: 100%; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); padding: 11px 12px; font-size: 14px; color: var(--text); background: var(--surface-2); font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 10px; }
-  .prod-search::placeholder { color: var(--text-faint); }
-  .prod-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-  .filter-btn { padding: 5px 12px; border: 0.5px solid var(--border-md); border-radius: 20px; font-size: 12px; font-weight: 500; color: var(--text-muted); background: var(--surface-2); cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
-  .filter-btn.active { background: var(--text); color: var(--surface); border-color: var(--text); }
-  .prod-count { font-size: 12px; color: var(--text-faint); margin-bottom: 10px; }
-  .prod-item { border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); background: var(--surface-2); margin-bottom: 8px; overflow: hidden; }
-  .prod-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; cursor: pointer; }
-  .prod-header-left { flex: 1; min-width: 0; }
-  .prod-name { font-size: 15px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .prod-meta { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
-  .prod-chevron { font-size: 12px; color: var(--text-faint); transition: transform 0.2s; margin-left: 8px; flex-shrink: 0; }
-  .prod-item.open .prod-chevron { transform: rotate(180deg); }
-  .prod-body { display: none; padding: 0 14px 14px; border-top: 0.5px solid var(--border); }
-  .prod-item.open .prod-body { display: block; }
-  .prod-section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); margin: 12px 0 6px; }
-  .pro-con-list { list-style: none; }
-  .pro-con-list li { font-size: 13px; color: var(--text); padding: 3px 0; display: flex; gap: 7px; line-height: 1.4; }
-  .pro-con-list.pros li::before { content: '✓'; color: var(--success); flex-shrink: 0; }
-  .pro-con-list.cons li::before { content: '✕'; color: var(--accent); flex-shrink: 0; }
-  .prod-actions { display: flex; gap: 8px; margin-top: 12px; }
-  .prod-edit-btn, .prod-del-btn { flex: 1; padding: 9px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 0.5px solid var(--border-md); }
-  .prod-edit-btn { background: var(--surface); color: var(--text); }
-  .prod-del-btn { background: var(--accent-light); color: var(--accent); border-color: transparent; }
-  .custom-tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 10px; background: var(--accent-light); color: var(--accent); margin-left: 5px; }
-  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: flex-end; justify-content: center; }
-  .modal-backdrop.open { display: flex; }
-  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 24px; width: 100%; max-width: 430px; max-height: 90vh; overflow-y: auto; }
-  .modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 18px; }
-  .modal label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; margin-top: 14px; }
-  .modal input, .modal select, .modal textarea { width: 100%; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm); padding: 11px 12px; font-size: 14px; color: var(--text); background: var(--surface-2); font-family: 'DM Sans', sans-serif; outline: none; }
-  .modal textarea { resize: none; height: 70px; }
-  .modal-hint { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
-  .modal-btns { display: flex; gap: 8px; margin-top: 20px; }
-  .modal-save { flex: 2; padding: 14px; background: var(--text); color: var(--surface); border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-  .modal-cancel { flex: 1; padding: 14px; background: var(--accent-light); color: var(--text); border: none; border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+:root{--bg:#f5c2cf;--surface:#fde8ee;--s2:#fdf0f4;--border:rgba(0,0,0,0.10);--bmd:rgba(0,0,0,0.18);--text:#111;--muted:#4a2030;--faint:#a06070;--accent:#c0002a;--alight:#fbd0d8;--ok:#1a6640;--okl:#d4f0e0;--gold:#b8860b;--goldl:#fff3cd;--r:16px;--rs:10px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;}
+body{max-width:430px;margin:0 auto;}
+.hdr{padding:16px 20px 12px;background:var(--bg);position:sticky;top:0;z-index:20;border-bottom:.5px solid var(--border);}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'DM Serif Display',serif;font-size:21px;}
+.streak-pill{background:var(--text);color:var(--bg);font-size:11px;font-weight:500;padding:4px 11px;border-radius:20px;}
+.date-line{font-size:11px;color:var(--muted);margin-top:2px;}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:10px 20px 0;}
+.nav-btn{padding:7px 2px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;border:.5px solid var(--bmd);border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center;}
+.nav-btn.active{background:var(--text);color:var(--surface);border-color:var(--text);}
+.scroll{padding:14px 20px 100px;overflow-y:auto;}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;}
+.ct{font-size:10px;font-weight:500;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+.pgbar{height:3px;background:var(--border);border-radius:2px;margin-bottom:5px;overflow:hidden;}
+.pgfill{height:100%;background:var(--ok);border-radius:2px;transition:width .4s cubic-bezier(.34,1.56,.64,1);}
+.pgtxt{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:.5px solid var(--border);cursor:pointer;}
+.step:last-child{border-bottom:none;padding-bottom:0;}
+.step:first-child{padding-top:0;}
+.step:active{opacity:.6;}
+.cb{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--bmd);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.cb.on{background:var(--ok);border-color:var(--ok);}
+.cb svg{opacity:0;transition:opacity .15s;}
+.cb.on svg{opacity:1;}
+.si{flex:1;}
+.sn{font-size:14px;}
+.ss{font-size:11px;color:var(--faint);margin-top:1px;}
+.mood-row{display:flex;gap:5px;margin-bottom:12px;}
+.mb{flex:1;padding:9px 3px;border:.5px solid var(--border);border-radius:var(--rs);background:var(--s2);cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;}
+.mb:active{transform:scale(.95);}
+.mb.on{border-color:var(--text);background:var(--alight);}
+.me{font-size:18px;display:block;}
+.ml{font-size:10px;color:var(--muted);margin-top:2px;display:block;}
+.mb.on .ml{color:var(--text);font-weight:500;}
+.srow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.slbl{font-size:12px;color:var(--muted);min-width:68px;}
+.srow input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:var(--bmd);border-radius:2px;outline:none;}
+.srow input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--text);cursor:pointer;}
+.sval{font-size:14px;font-weight:500;min-width:26px;text-align:right;}
+.txa{width:100%;border:.5px solid var(--bmd);border-radius:var(--rs);padding:11px;font-size:13px;color:var(--text);background:var(--s2);resize:none;height:76px;font-family:'DM Sans',sans-serif;outline:none;}
+.txa::placeholder{color:var(--faint);}
+.fl{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.save-btn{width:calc(100% - 40px);position:fixed;bottom:20px;left:20px;padding:15px;background:var(--text);color:var(--bg);border:none;border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s,transform .15s;}
+.save-btn:active{opacity:.8;transform:scale(.98);}
+.save-btn.saved{background:var(--ok);color:#fff;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px;}
+.stat{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:12px 8px;text-align:center;}
+.snum{font-family:'DM Serif Display',serif;font-size:26px;}
+.slb{font-size:10px;color:var(--faint);margin-top:1px;}
+.le{padding:12px 0;border-bottom:.5px solid var(--border);}
+.le:last-child{border-bottom:none;}
+.ld{font-size:11px;color:var(--faint);margin-bottom:5px;}
+.lm{display:flex;justify-content:space-between;align-items:center;}
+.ls{font-size:13px;}
+.lc{font-size:12px;color:var(--muted);}
+.ln{font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;}
+.lbg{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.bg{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--alight);border:.5px solid var(--border);color:var(--muted);}
+.empty{text-align:center;padding:36px 0;color:var(--faint);font-size:13px;}
+.page{display:none;}
+.page.active{display:block;}
+.cdots{display:flex;gap:2px;margin-top:6px;}
+.cdot{flex:1;height:4px;border-radius:2px;background:var(--border);}
+.cdot.filled{background:var(--accent);}
+/* products */
+.padd{width:100%;padding:12px;background:var(--text);color:var(--surface);border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;}
+.psearch{width:100%;border:.5px solid var(--bmd);border-radius:var(--rs);padding:10px 12px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;margin-bottom:8px;}
+.pfilter{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.fb{padding:4px 10px;border:.5px solid var(--bmd);border-radius:20px;font-size:11px;font-weight:500;color:var(--muted);background:var(--s2);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.fb.active{background:var(--text);color:var(--surface);border-color:var(--text);}
+.pcnt{font-size:11px;color:var(--faint);margin-bottom:8px;}
+.pi{border:.5px solid var(--bmd);border-radius:var(--rs);background:var(--s2);margin-bottom:7px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;cursor:pointer;}
+.phl{flex:1;min-width:0;}
+.pname{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pmeta{font-size:10px;color:var(--faint);margin-top:1px;}
+.pchev{font-size:11px;color:var(--faint);transition:transform .2s;margin-left:7px;flex-shrink:0;}
+.pi.open .pchev{transform:rotate(180deg);}
+.pb{display:none;padding:0 13px 13px;border-top:.5px solid var(--border);}
+.pi.open .pb{display:block;}
+.psl{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:10px 0 5px;}
+.pcl{list-style:none;}
+.pcl li{font-size:12px;padding:2px 0;display:flex;gap:6px;line-height:1.4;}
+.pcl.pros li::before{content:'✓';color:var(--ok);flex-shrink:0;}
+.pcl.cons li::before{content:'✕';color:var(--accent);flex-shrink:0;}
+.pacts{display:flex;gap:7px;margin-top:10px;}
+.pedt,.pdel{flex:1;padding:8px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:.5px solid var(--bmd);}
+.pedt{background:var(--surface);color:var(--text);}
+.pdel{background:var(--alight);color:var(--accent);border-color:transparent;}
+.ctag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:10px;background:var(--alight);color:var(--accent);margin-left:4px;}
+/* modal */
+.mbk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:flex-end;justify-content:center;}
+.mbk.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;}
+.mt{font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:16px;}
+.modal label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;margin-top:12px;}
+.modal input,.modal select,.modal textarea{width:100%;border:.5px solid var(--bmd);border-radius:var(--rs);padding:10px 11px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;}
+.modal textarea{resize:none;height:65px;}
+.mhint{font-size:10px;color:var(--faint);margin-top:3px;}
+.mbtns{display:flex;gap:7px;margin-top:18px;}
+.msave{flex:2;padding:13px;background:var(--text);color:var(--surface);border:none;border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.mcanc{flex:1;padding:13px;background:var(--alight);color:var(--text);border:none;border-radius:var(--rs);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+/* rewards */
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.badge-item{background:var(--s2);border:.5px solid var(--border);border-radius:var(--rs);padding:12px 8px;text-align:center;}
+.badge-item.earned{background:var(--goldl);border-color:var(--gold);}
+.badge-icon{font-size:28px;display:block;margin-bottom:4px;filter:grayscale(1);opacity:.35;}
+.badge-item.earned .badge-icon{filter:none;opacity:1;}
+.badge-name{font-size:10px;font-weight:500;color:var(--muted);}
+.badge-item.earned .badge-name{color:var(--gold);}
+.pts-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:8px 0;}
+.pts-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .5s ease;}
+.milestone-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--border);}
+.milestone-row:last-child{border-bottom:none;}
+.ms-icon{font-size:22px;flex-shrink:0;}
+.ms-info{flex:1;}
+.ms-name{font-size:13px;font-weight:500;}
+.ms-desc{font-size:11px;color:var(--faint);margin-top:1px;}
+.ms-done{font-size:11px;color:var(--ok);font-weight:500;}
+/* insights */
+.insight-card{background:var(--s2);border:.5px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:8px;}
+.insight-emoji{font-size:22px;margin-bottom:6px;display:block;}
+.insight-title{font-size:14px;font-weight:500;margin-bottom:4px;}
+.insight-body{font-size:12px;color:var(--muted);line-height:1.5;}
+.chart-row{display:flex;align-items:flex-end;gap:4px;height:60px;margin:10px 0;}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;background:var(--accent);opacity:.6;min-height:3px;transition:height .3s;}
+.chart-lbl{font-size:9px;color:var(--faint);text-align:center;margin-top:3px;}
+/* skin type quiz */
+.quiz-opt{width:100%;padding:12px;border:.5px solid var(--bmd);border-radius:var(--rs);background:var(--s2);font-size:13px;color:var(--text);text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:7px;}
+.quiz-opt.sel{background:var(--alight);border-color:var(--accent);color:var(--accent);font-weight:500;}
+/* ingredient checker */
+.flag-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:.5px solid var(--border);}
+.flag-row:last-child{border-bottom:none;}
+.flag-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.flag-red{background:#e53e3e;}
+.flag-yellow{background:#d69e2e;}
+.flag-green{background:#38a169;}
+/* conflict checker */
+.conflict-item{background:var(--s2);border:.5px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:7px;}
+/* shopping list */
+.shop-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--border);}
+.shop-item:last-child{border-bottom:none;}
+.shop-cb{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bmd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.shop-cb.done{background:var(--ok);border-color:var(--ok);}
+.shop-name{flex:1;font-size:13px;}
+.shop-name.done{text-decoration:line-through;color:var(--faint);}
+/* photo log */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.photo-thumb{aspect-ratio:1;border-radius:8px;object-fit:cover;width:100%;border:.5px solid var(--border);}
+.photo-add{aspect-ratio:1;border-radius:8px;border:1.5px dashed var(--bmd);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--s2);font-size:22px;color:var(--faint);}
+/* reminders */
+.rem-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:.5px solid var(--border);gap:8px;}
+.rem-item:last-child{border-bottom:none;}
+.day-btn{padding:5px 8px;border:.5px solid var(--bmd);border-radius:20px;font-size:11px;font-weight:500;color:var(--muted);background:var(--s2);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.day-btn.on{background:var(--text);color:var(--surface);border-color:var(--text);}
+.big-btn{width:100%;padding:13px;background:var(--text);color:var(--surface);border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;}
+input[type=time]{color-scheme:light;}
+/* toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-row">
-    <div class="app-title">Skin &amp; Mind</div>
+
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="logo">Skin &amp; Mind</div>
     <div class="streak-pill" id="streak-pill">0 day streak</div>
   </div>
-  <div class="today-date" id="today-date"></div>
+  <div class="date-line" id="today-date"></div>
 </div>
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('today')">Today</button>
-  <button class="tab" onclick="switchTab('products')">Products</button>
-  <button class="tab" onclick="switchTab('reminders')">Reminders</button>
-  <button class="tab" onclick="switchTab('log')">Log</button>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="switchTab('today')">Today</button>
+  <button class="nav-btn" onclick="switchTab('insights')">Insights</button>
+  <button class="nav-btn" onclick="switchTab('tools')">Tools</button>
+  <button class="nav-btn" onclick="switchTab('rewards')">Rewards</button>
+  <button class="nav-btn" onclick="switchTab('more')">More</button>
 </div>
+
 <div class="scroll">
-  <div id="page-today" class="page active">
-    <div class="card">
-      <div class="card-title">Morning routine</div>
-      <div class="prog-bar"><div class="prog-fill" id="am-fill" style="width:0%"></div></div>
-      <div class="prog-text" id="am-text">0 of 3 done</div>
-      <div id="am-steps"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Night routine</div>
-      <div class="prog-bar"><div class="prog-fill" id="pm-fill" style="width:0%"></div></div>
-      <div class="prog-text" id="pm-text">0 of 3 done</div>
-      <div id="pm-steps"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">How are you feeling today?</div>
-      <div class="mood-row" id="mood-grid"></div>
-      <div class="slider-row">
-        <span class="slider-label">Confidence</span>
-        <input type="range" min="1" max="10" value="5" step="1" id="conf-slider">
-        <span class="slider-val" id="conf-val">5</span>
-      </div>
-      <div class="conf-visual" id="conf-dots"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Skin condition</div>
-      <div class="mood-row" id="skin-grid"></div>
-    </div>
-    <div class="card">
-      <div class="field-label">Notes (optional)</div>
-      <textarea class="notes" id="notes-input" placeholder="anything on your mind today..."></textarea>
-    </div>
+
+<!-- ══ TODAY ══ -->
+<div id="page-today" class="page active">
+  <div class="card">
+    <div class="ct">Morning routine</div>
+    <div class="pgbar"><div class="pgfill" id="am-fill" style="width:0%"></div></div>
+    <div class="pgtxt" id="am-text">0 of 3 done</div>
+    <div id="am-steps"></div>
   </div>
-
-  <div id="page-products" class="page">
-    <div class="card">
-      <div class="card-title">Skincare product library</div>
-      <button class="prod-add-btn" onclick="openModal()">+ Add custom product</button>
-      <input class="prod-search" id="prod-search" placeholder="Search by name or brand..." oninput="renderProducts()">
-      <div class="prod-filter" id="prod-filter"></div>
-      <div class="prod-count" id="prod-count"></div>
-      <div id="prod-list"></div>
-    </div>
+  <div class="card">
+    <div class="ct">Night routine</div>
+    <div class="pgbar"><div class="pgfill" id="pm-fill" style="width:0%"></div></div>
+    <div class="pgtxt" id="pm-text">0 of 3 done</div>
+    <div id="pm-steps"></div>
   </div>
-
-  <div id="page-reminders" class="page">
-    <div class="card">
-      <div class="card-title">Notification reminders</div>
-      <div id="notif-permission-banner" style="display:none;background:var(--accent-light);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--accent);line-height:1.5;"></div>
-      <button class="prod-add-btn" id="notif-enable-btn" onclick="requestNotifPermission()" style="margin-bottom:6px;">🔔 Enable browser notifications</button>
-      <div id="notif-status" style="font-size:12px;color:var(--text-faint);margin-bottom:16px;text-align:center;"></div>
-
-      <div style="margin-bottom:20px;">
-        <div class="field-label" style="margin-bottom:10px;font-size:13px;font-weight:500;color:var(--text-muted);">Add a reminder</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <select id="r-routine" onchange="toggleCustomInput()" style="flex:1.4;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
-            <option value="Morning routine">🌅 Morning routine</option>
-            <option value="Night routine">🌙 Night routine</option>
-            <option value="Apply SPF">☀️ Apply SPF</option>
-            <option value="Change pillowcase">🛏️ Change pillowcase</option>
-            <option value="Drink water">💧 Drink water</option>
-            <option value="Custom">✏️ Custom...</option>
-          </select>
-          <input type="time" id="r-time" value="22:00" style="flex:1;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
-        </div>
-        <div id="r-custom-wrap" style="display:none;margin-bottom:8px;">
-          <input type="text" id="r-custom" placeholder="e.g. Use face mask tonight" style="width:100%;border:0.5px solid var(--border-md);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;color:var(--text);background:var(--surface-2);font-family:'DM Sans',sans-serif;outline:none;">
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Repeat on</div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap;" id="r-days-row"></div>
-        </div>
-        <button onclick="addReminder()" style="width:100%;padding:13px;background:var(--text);color:var(--surface);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Add reminder</button>
-      </div>
-
-      <div class="card-title" style="margin-bottom:10px;">Your reminders</div>
-      <div id="reminder-list"><div class="empty">No reminders set yet</div></div>
+  <div class="card">
+    <div class="ct">How are you feeling?</div>
+    <div class="mood-row" id="mood-grid"></div>
+    <div class="srow">
+      <span class="slbl">Confidence</span>
+      <input type="range" min="1" max="10" value="5" step="1" id="conf-slider">
+      <span class="sval" id="conf-val">5</span>
     </div>
+    <div class="cdots" id="conf-dots"></div>
   </div>
-
-  <div id="page-log" class="page">
-    <div class="stats-grid">
-      <div class="stat"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">day streak</div></div>
-      <div class="stat"><div class="stat-num" id="stat-avg">—</div><div class="stat-label">avg confidence</div></div>
-      <div class="stat"><div class="stat-num" id="stat-days">0</div><div class="stat-label">days logged</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Past entries</div>
-      <div id="log-list"><div class="empty">No entries yet</div></div>
-    </div>
+  <div class="card">
+    <div class="ct">Skin condition</div>
+    <div class="mood-row" id="skin-grid"></div>
+  </div>
+  <div class="card">
+    <div class="fl">Notes (optional)</div>
+    <textarea class="txa" id="notes-input" placeholder="anything on your mind today..."></textarea>
+  </div>
+  <div class="card" id="daily-photo-card">
+    <div class="ct">Today's skin photo (optional)</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Take a quick photo to track your skin's progress over time.</p>
+    <label style="display:block;cursor:pointer;">
+      <div class="photo-add" id="daily-photo-preview">📷</div>
+      <input type="file" accept="image/*" capture="user" id="daily-photo-input" style="display:none" onchange="handleDailyPhoto(this)">
+    </label>
   </div>
 </div>
+
+<!-- ══ INSIGHTS ══ -->
+<div id="page-insights" class="page">
+  <div class="card">
+    <div class="ct">Weekly confidence</div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:70px;" id="conf-chart"></div>
+    <div style="display:flex;gap:4px;" id="conf-chart-lbls"></div>
+    <div id="conf-summary" style="margin-top:12px;font-size:13px;color:var(--muted);line-height:1.6;"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Weekly report</div>
+    <div id="weekly-report"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Motivation</div>
+    <div id="motivation-card"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Product effectiveness</div>
+    <div id="product-effectiveness"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Skin progression photos</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Your saved skin photos — tap + to add more.</p>
+    <div class="photo-grid" id="photo-gallery"></div>
+  </div>
+</div>
+
+<!-- ══ TOOLS ══ -->
+<div id="page-tools" class="page">
+  <!-- Skin Type Quiz -->
+  <div class="card">
+    <div class="ct">Find your skin type</div>
+    <div id="quiz-area"></div>
+  </div>
+  <!-- Ingredient Checker -->
+  <div class="card">
+    <div class="ct">Ingredient checker 📸</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Paste an ingredient list or take a photo of a product label to flag potential irritants.</p>
+    <label style="display:block;margin-bottom:8px;">
+      <div class="big-btn" style="margin-bottom:0;background:var(--s2);color:var(--text);border:.5px solid var(--bmd);">📷 Take photo of label</div>
+      <input type="file" accept="image/*" capture="environment" style="display:none" onchange="handleIngredientPhoto(this)">
+    </label>
+    <textarea class="txa" id="ingr-input" placeholder="Or paste ingredient list here e.g. Water, Niacinamide, Zinc PCA..." style="height:80px;margin-bottom:8px;"></textarea>
+    <button class="big-btn" onclick="checkIngredients()">Analyse ingredients</button>
+    <div id="ingr-results"></div>
+  </div>
+  <!-- Conflict Checker -->
+  <div class="card">
+    <div class="ct">Product conflict checker</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Select products you use together to check for ingredient conflicts.</p>
+    <div id="conflict-select" style="margin-bottom:8px;"></div>
+    <button class="big-btn" onclick="checkConflicts()">Check for conflicts</button>
+    <div id="conflict-results"></div>
+  </div>
+  <!-- Products Library -->
+  <div class="card">
+    <div class="ct">Product library</div>
+    <button class="padd" onclick="openModal()">+ Add custom product</button>
+    <input class="psearch" id="prod-search" placeholder="Search by name or brand..." oninput="renderProducts()">
+    <div class="pfilter" id="prod-filter"></div>
+    <div class="pcnt" id="prod-count"></div>
+    <div id="prod-list"></div>
+  </div>
+  <!-- Shopping List -->
+  <div class="card">
+    <div class="ct">Shopping list</div>
+    <div style="display:flex;gap:7px;margin-bottom:10px;">
+      <input type="text" id="shop-input" placeholder="Add product to list..." style="flex:1;border:.5px solid var(--bmd);border-radius:var(--rs);padding:10px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;">
+      <button onclick="addShopItem()" style="padding:10px 14px;background:var(--text);color:var(--surface);border:none;border-radius:var(--rs);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Add</button>
+    </div>
+    <div id="shop-list"><div class="empty">Your shopping list is empty</div></div>
+  </div>
+</div>
+
+<!-- ══ REWARDS ══ -->
+<div id="page-rewards" class="page">
+  <div class="card">
+    <div class="ct">Your points</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-family:'DM Serif Display',serif;font-size:36px;" id="pts-display">0</span>
+      <span style="font-size:12px;color:var(--faint);">pts</span>
+    </div>
+    <div class="pts-bar"><div class="pts-fill" id="pts-fill" style="width:0%"></div></div>
+    <div style="font-size:11px;color:var(--faint);" id="pts-next"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Badges</div>
+    <div class="badge-grid" id="badge-grid"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Milestones</div>
+    <div id="milestone-list"></div>
+  </div>
+</div>
+
+<!-- ══ MORE ══ -->
+<div id="page-more" class="page">
+  <!-- Reminders -->
+  <div class="card">
+    <div class="ct">Reminders</div>
+    <div id="notif-banner" style="display:none;background:var(--alight);border-radius:var(--rs);padding:10px;margin-bottom:10px;font-size:12px;color:var(--accent);line-height:1.5;"></div>
+    <button class="big-btn" id="notif-btn" onclick="requestNotif()">🔔 Enable notifications</button>
+    <div id="notif-status" style="font-size:11px;color:var(--faint);text-align:center;margin-bottom:14px;"></div>
+    <div style="display:flex;gap:7px;margin-bottom:7px;">
+      <select id="r-routine" onchange="toggleCustom()" style="flex:1.4;border:.5px solid var(--bmd);border-radius:var(--rs);padding:9px 10px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;">
+        <option>Morning routine</option><option>Night routine</option>
+        <option>Apply SPF</option><option>Drink water</option><option>Custom...</option>
+      </select>
+      <input type="time" id="r-time" value="22:00" style="flex:1;border:.5px solid var(--bmd);border-radius:var(--rs);padding:9px 10px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+    <div id="r-custom-wrap" style="display:none;margin-bottom:7px;">
+      <input type="text" id="r-custom" placeholder="Custom reminder..." style="width:100%;border:.5px solid var(--bmd);border-radius:var(--rs);padding:9px 10px;font-size:13px;color:var(--text);background:var(--s2);font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;" id="r-days"></div>
+    <button class="big-btn" onclick="addReminder()">Add reminder</button>
+    <div id="rem-list"><div class="empty">No reminders set</div></div>
+  </div>
+  <!-- My Log -->
+  <div class="card">
+    <div class="ct">My Log</div>
+    <div class="sg">
+      <div class="stat"><div class="snum" id="stat-streak">0</div><div class="slb">day streak</div></div>
+      <div class="stat"><div class="snum" id="stat-avg">—</div><div class="slb">avg confidence</div></div>
+      <div class="stat"><div class="snum" id="stat-days">0</div><div class="slb">days logged</div></div>
+    </div>
+    <div id="log-list"><div class="empty">No entries yet</div></div>
+  </div>
+</div>
+
+</div><!-- end scroll -->
 
 <button class="save-btn" id="save-btn" onclick="saveEntry()">Save today</button>
+<div class="toast" id="toast"></div>
 
-<div class="modal-backdrop" id="modal-backdrop">
+<!-- Product Modal -->
+<div class="mbk" id="modal-backdrop">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Add custom product</div>
+    <div class="mt" id="modal-title">Add custom product</div>
     <label>Product name *</label>
     <input type="text" id="m-name" placeholder="e.g. CeraVe Moisturising Cream">
     <label>Brand</label>
@@ -254,247 +385,160 @@
       <option>Essence</option><option>Eye Cream</option><option>Lip Care</option>
       <option>Mist</option><option>Other</option>
     </select>
-    <label>Pros <span style="color:var(--text-faint);font-weight:400">(one per line)</span></label>
-    <textarea id="m-pros" placeholder="Deeply hydrating&#10;Fragrance-free&#10;Non-comedogenic"></textarea>
-    <div class="modal-hint">Each line = one pro ✓</div>
-    <label>Cons <span style="color:var(--text-faint);font-weight:400">(one per line)</span></label>
+    <label>Pros (one per line)</label>
+    <textarea id="m-pros" placeholder="Deeply hydrating&#10;Fragrance-free"></textarea>
+    <div class="mhint">Each line = one pro ✓</div>
+    <label>Cons (one per line)</label>
     <textarea id="m-cons" placeholder="Quite thick texture&#10;Expensive"></textarea>
-    <div class="modal-hint">Each line = one con ✕</div>
+    <div class="mhint">Each line = one con ✕</div>
     <label>Notes (optional)</label>
-    <input type="text" id="m-notes" placeholder="e.g. AM use only, patch tested first">
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-      <button class="modal-save" onclick="saveProduct()">Save product</button>
+    <input type="text" id="m-notes" placeholder="e.g. AM use only">
+    <div class="mbtns">
+      <button class="mcanc" onclick="closeModal()">Cancel</button>
+      <button class="msave" onclick="saveProduct()">Save product</button>
     </div>
   </div>
 </div>
 
 <script>
+// ══ DATA ══
 const AM_STEPS=[{name:'Cleanser',sub:'gentle face wash — 60 sec'},{name:'Vitamin C serum',sub:'apply evenly, wait 30 sec'},{name:'Moisturiser + SPF',sub:"don't skip the sunscreen"}];
 const PM_STEPS=[{name:'Cleanser',sub:'remove the day properly'},{name:'Hyaluronic acid serum',sub:'apply to damp skin'},{name:'Moisturiser',sub:'lock in hydration overnight'}];
 const MOODS=[['😔','Low'],['😐','Okay'],['🙂','Good'],['😊','Great'],['🤩','Amazing']];
 const SKIN=[['🔴','Bad'],['🟠','Meh'],['🟡','Ok'],['🟢','Good'],['⭐','Clear']];
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-const DB=[
-// CLEANSERS
-{id:'c001',name:'CeraVe Hydrating Cleanser',brand:'CeraVe',cat:'Cleanser',pros:['Ceramides restore skin barrier','Fragrance-free','Gentle for daily use','Great for dry/normal skin','Very affordable'],cons:['May not remove heavy makeup','Can feel filmy on oily skin']},
-{id:'c002',name:'CeraVe Foaming Facial Cleanser',brand:'CeraVe',cat:'Cleanser',pros:['Ideal for oily/combo skin','Removes excess oil','Niacinamide and ceramides','Fragrance-free'],cons:['Too drying for dry skin','Can over-strip if used twice daily']},
-{id:'c003',name:'La Roche-Posay Toleriane Hydrating Gentle Cleanser',brand:'La Roche-Posay',cat:'Cleanser',pros:['Ultra-gentle prebiotic formula','Restores microbiome','No fragrance or soap'],cons:['Pricey for a cleanser','May not fully remove heavy makeup']},
-{id:'c004',name:'La Roche-Posay Effaclar Purifying Foaming Gel',brand:'La Roche-Posay',cat:'Cleanser',pros:['Deep cleanses oily skin','Zinc pidolate controls sebum','Dermatologist tested'],cons:['Drying with overuse','Not for dry/sensitive skin']},
-{id:'c005',name:'Cetaphil Gentle Skin Cleanser',brand:'Cetaphil',cat:'Cleanser',pros:['Dermatologist recommended','Soap-free formula','Works on all skin types','Very affordable'],cons:['Can leave residue','Minimal cleansing power for heavy products']},
-{id:'c006',name:'Bioderma Sensibio H2O Micellar Water',brand:'Bioderma',cat:'Cleanser',pros:['No-rinse formula','Removes makeup and cleanses','Extremely gentle','Great for sensitive skin'],cons:['Not a replacement for a full cleanse','Can be expensive','Cotton pad waste']},
-{id:'c007',name:'Simple Kind to Skin Moisturising Facial Wash',brand:'Simple',cat:'Cleanser',pros:['No artificial perfume or colour','Sensitive skin formula','Affordable','Widely available'],cons:['Not strong enough for oily skin','Basic formulation']},
-{id:'c008',name:'Clinique Take The Day Off Cleansing Balm',brand:'Clinique',cat:'Cleanser',pros:['Melts away waterproof makeup','Gentle on eyes','No fragrance','Rinses cleanly'],cons:['Pricey','Not ideal standalone for oily skin']},
-{id:'c009',name:'DHC Deep Cleansing Oil',brand:'DHC',cat:'Cleanser',pros:['Removes waterproof makeup','Nourishing olive oil base','Rinses without residue','Japanese skincare staple'],cons:['Expensive for an oil cleanser','Can feel greasy initially']},
-{id:'c010',name:'The Inkey List Oat Cleansing Balm',brand:'The Inkey List',cat:'Cleanser',pros:['Soothing oat extract','Budget-friendly','Removes makeup effectively','Non-stripping'],cons:['May need second cleanse','Not fragrance-free']},
-{id:'c011',name:'Glossier Milky Jelly Cleanser',brand:'Glossier',cat:'Cleanser',pros:['Gentle gel texture','Conditions skin','No tight feeling after'],cons:['Expensive for the size','Online only','Light cleansing only']},
-{id:'c012',name:'Drunk Elephant Beste No. 9 Jelly Cleanser',brand:'Drunk Elephant',cat:'Cleanser',pros:['pH balanced','No silicones or fragrance','Glycerin rich','Gentle yet effective'],cons:['Very expensive','Tiny product amount']},
-{id:'c013',name:'Vanicream Gentle Facial Cleanser',brand:'Vanicream',cat:'Cleanser',pros:['Free of dyes, fragrance, lanolin','Dermatologist recommended','Great for reactive/eczema skin','Very affordable'],cons:['Very basic formula','Minimal lather']},
-{id:'c014',name:'COSRX Low pH Good Morning Gel Cleanser',brand:'COSRX',cat:'Cleanser',pros:['Low pH preserves skin barrier','Tea tree oil for acne','Gentle lather','Affordable K-beauty'],cons:['Tea tree scent not for everyone','Can dry very dry skin']},
-{id:'c015',name:'Tatcha The Rice Wash',brand:'Tatcha',cat:'Cleanser',pros:['Japanese rice bran polishes gently','Creamy luxurious texture','Leaves skin soft','Good for dry/sensitive skin'],cons:['Very expensive','Small amount of product']},
-{id:'c016',name:'Farmacy Green Clean Makeup Meltaway Cleansing Balm',brand:'Farmacy',cat:'Cleanser',pros:['Dissolves sunscreen and makeup','Papaya enzyme gently exfoliates','Rinses cleanly','Natural ingredients'],cons:['Expensive','Not fragrance-free']},
-{id:'c017',name:'Youth to the People Superfood Cleanser',brand:'Youth to the People',cat:'Cleanser',pros:['Antioxidant kale and green tea','Vegan','Sustainable packaging'],cons:['Expensive','Has some fragrance']},
-{id:'c018',name:'Murad Clarifying Cleanser',brand:'Murad',cat:'Cleanser',pros:['Salicylic acid fights acne','Deep cleanses pores'],cons:['Expensive','Can be drying']},
-{id:'c019',name:'Aveeno Calm + Restore Nourishing Oat Cleanser',brand:'Aveeno',cat:'Cleanser',pros:['Oat formula soothes irritation','Fragrance-free','Gentle on eczema skin','Affordable'],cons:['Not for very oily skin','Mild cleansing only']},
-{id:'c020',name:'Neutrogena Ultra Gentle Daily Cleanser',brand:'Neutrogena',cat:'Cleanser',pros:['Fragrance-free','Non-comedogenic','Gentle for daily use','Affordable'],cons:['Very mild — may not suit very oily skin']},
-{id:'c021',name:'First Aid Beauty Pure Skin Face Cleanser',brand:'First Aid Beauty',cat:'Cleanser',pros:['Colloidal oatmeal','Allergy tested','Fragrance-free','Sensitive skin friendly'],cons:['Basic formula','Expensive for what it is']},
-{id:'c022',name:'Paula\'s Choice Optimal Results Hydrating Cleanser',brand:'Paula\'s Choice',cat:'Cleanser',pros:['Hydrating formula','No fragrance','Gentle for all skin types'],cons:['Pricey','Online only']},
-{id:'c023',name:'Pixi Glow Tonic Cleanser',brand:'Pixi',cat:'Cleanser',pros:['Glycolic acid for mild exfoliation','Brightening','Refreshing gel formula'],cons:['Not suitable for sensitive skin','Can cause irritation with overuse']},
-{id:'c024',name:'Neutrogena Hydro Boost Hydrating Cleansing Gel',brand:'Neutrogena',cat:'Cleanser',pros:['Hyaluronic acid formula','Non-comedogenic','Refreshing gel texture','Affordable'],cons:['Not ideal for very oily skin','Mild cleansing only']},
-{id:'c025',name:'REN Evercalm Gentle Cleansing Gel',brand:'REN',cat:'Cleanser',pros:['Biome-friendly formula','Calms redness','Natural ingredients','Sustainable packaging'],cons:['Very expensive','Minimal lather may feel unsatisfying']},
-// MOISTURISERS
-{id:'m001',name:'CeraVe Moisturising Cream',brand:'CeraVe',cat:'Moisturiser',pros:['Ceramide complex restores barrier','Long-lasting hydration','Fragrance-free','Great for dry/eczema skin','Affordable'],cons:['Too heavy for oily skin','Thick jar packaging']},
-{id:'m002',name:'Neutrogena Hydro Boost Water Gel',brand:'Neutrogena',cat:'Moisturiser',pros:['Hyaluronic acid gel formula','Lightweight for oily skin','Non-comedogenic','Absorbs quickly','Affordable'],cons:['Not enough for very dry skin','Some fragrance ingredients']},
-{id:'m003',name:'La Roche-Posay Toleriane Double Repair Moisturiser',brand:'La Roche-Posay',cat:'Moisturiser',pros:['Prebiotic thermal water','Ceramides and niacinamide','Fragrance-free','All skin types'],cons:['Can pill under makeup','Pricey for a basic moisturiser']},
-{id:'m004',name:'Olay Regenerist Micro-Sculpting Cream',brand:'Olay',cat:'Moisturiser',pros:['Niacinamide and hyaluronic acid','Firms and plumps','Good anti-aging value','Widely available'],cons:['Contains fragrance','Not ideal for sensitive skin']},
-{id:'m005',name:'Kiehl\'s Ultra Facial Cream',brand:'Kiehl\'s',cat:'Moisturiser',pros:['24hr hydration','Squalane formula','Suitable for all skin types','Classic reliable formula'],cons:['Expensive','Some find it too rich']},
-{id:'m006',name:'Tatcha The Water Cream',brand:'Tatcha',cat:'Moisturiser',pros:['Oil-free lightweight texture','Japanese botanicals','Pore refining','Leaves skin smooth'],cons:['Very expensive','Not enough for very dry skin']},
-{id:'m007',name:'Drunk Elephant Protini Polypeptide Cream',brand:'Drunk Elephant',cat:'Moisturiser',pros:['Peptides support collagen','No fragrance or essential oils','Firms and plumps over time'],cons:['Extremely expensive','Slow visible results']},
-{id:'m008',name:'The Ordinary Natural Moisturizing Factors + HA',brand:'The Ordinary',cat:'Moisturiser',pros:['Amino acids and hyaluronic acid','Very affordable','Simple effective formula','No fragrance'],cons:['Lightweight — not for very dry skin','Basic formula only']},
-{id:'m009',name:'Weleda Skin Food',brand:'Weleda',cat:'Moisturiser',pros:['Rich nourishing formula','Natural ingredients','Multi-purpose use','Iconic cult product'],cons:['Strong herbal fragrance','Too heavy for oily skin','Not for acne-prone']},
-{id:'m010',name:'First Aid Beauty Ultra Repair Cream',brand:'First Aid Beauty',cat:'Moisturiser',pros:['Colloidal oatmeal soothes eczema','Fast absorbing','Fragrance-free','Good for sensitive skin'],cons:['Expensive','Not enough for extremely dry skin']},
-{id:'m011',name:'Belif The True Cream Aqua Bomb',brand:'Belif',cat:'Moisturiser',pros:['Cooling gel cream texture','Lady\'s mantle calms','Great for oily/combo skin','Long-lasting hydration'],cons:['Expensive','May not be enough for dry skin']},
-{id:'m012',name:'Laneige Water Bank Moisture Cream',brand:'Laneige',cat:'Moisturiser',pros:['Hydro ionized mineral water','Lightweight','Suitable for normal to combo skin'],cons:['Expensive','Not for very dry skin']},
-{id:'m013',name:'Skinceuticals Triple Lipid Restore 2:4:2',brand:'Skinceuticals',cat:'Moisturiser',pros:['Clinical-grade ceramides and fatty acids','Excellent for aging/dry skin','Evidence-backed formula'],cons:['Extremely expensive','Overkill for young skin']},
-{id:'m014',name:'Hada Labo Gokujyun Premium Lotion',brand:'Hada Labo',cat:'Moisturiser',pros:['Multiple weights of hyaluronic acid','Extremely hydrating','Fragrance-free','Cult Japanese favourite'],cons:['Not available everywhere','Thin texture may not be enough alone']},
-{id:'m015',name:'Cetaphil Moisturising Cream',brand:'Cetaphil',cat:'Moisturiser',pros:['Dermatologist recommended','Fragrance-free','Multi-purpose face and body','Budget-friendly'],cons:['Contains mineral oil','Very basic formula']},
-{id:'m016',name:'Vanicream Moisturizing Skin Cream',brand:'Vanicream',cat:'Moisturiser',pros:['Free of dyes and fragrance','Ideal for reactive skin','Rich and long-lasting'],cons:['Heavy texture','Not suitable for oily skin']},
-{id:'m017',name:'COSRX Oil-Free Ultra Moisturising Lotion',brand:'COSRX',cat:'Moisturiser',pros:['Birch sap hydrates deeply','Oil-free for oily skin','Budget K-beauty','Lightweight'],cons:['Not enough for dry skin']},
-{id:'m018',name:'Glossier Priming Moisturizer',brand:'Glossier',cat:'Moisturiser',pros:['Lightweight daily moisturiser','Works well under makeup','Clean feel'],cons:['Expensive for what it is','Not for dry skin']},
-{id:'m019',name:'Dr. Jart+ Cicapair Tiger Grass Cream',brand:'Dr. Jart+',cat:'Moisturiser',pros:['Centella asiatica calms redness','Colour-correcting green tint','Good for rosacea','Available at Sephora'],cons:['Expensive','Has fragrance','Tint not for all uses']},
-{id:'m020',name:'Paula\'s Choice Calm Restoring Moisturizer',brand:'Paula\'s Choice',cat:'Moisturiser',pros:['For sensitive and rosacea skin','Fragrance-free','Anti-redness ingredients'],cons:['Online only','Pricey']},
-{id:'m021',name:'Clinique Dramatically Different Moisturizing Gel',brand:'Clinique',cat:'Moisturiser',pros:['Lightweight gel formula','Good for combination skin','Increases skin resilience'],cons:['Expensive','Has some fragrance']},
-{id:'m022',name:'Aveeno Positively Radiant Daily Moisturiser SPF 30',brand:'Aveeno',cat:'Moisturiser',pros:['Moisturiser and SPF combined','Soy extract brightens','Lightweight','Affordable'],cons:['SPF not enough for outdoor use','Contains fragrance']},
-{id:'m023',name:'Eucerin Original Healing Cream',brand:'Eucerin',cat:'Moisturiser',pros:['Excellent for very dry skin','Fragrance-free','Long-lasting relief','Affordable'],cons:['Very thick','Not ideal as face moisturiser for oily skin']},
-{id:'m024',name:'RoC Retinol Correxion Line Smoothing Cream',brand:'RoC',cat:'Moisturiser',pros:['Retinol with mineral complex','Reduces fine lines','Affordable retinol moisturiser'],cons:['Can cause initial irritation','Fragrance included','Slow results']},
-{id:'m025',name:'Estee Lauder DayWear Creme SPF 15',brand:'Estee Lauder',cat:'Moisturiser',pros:['Antioxidant protection','Broad spectrum SPF 15','Luxury feel'],cons:['SPF too low for sunny climates','Expensive','Contains fragrance']},
-// SERUMS
-{id:'s001',name:'The Ordinary Niacinamide 10% + Zinc 1%',brand:'The Ordinary',cat:'Serum',pros:['Minimises pores','Controls sebum','Brightens skin tone','Extremely affordable','Fragrance-free'],cons:['Can pill under other products','May cause purging initially','High concentration can irritate some']},
-{id:'s002',name:'The Ordinary Hyaluronic Acid 2% + B5',brand:'The Ordinary',cat:'Serum',pros:['Multiple HA weights for deep hydration','B5 repairs skin barrier','Very affordable','Fragrance-free'],cons:['Must apply to damp skin','Not moisturising alone']},
-{id:'s003',name:'The Ordinary Vitamin C Suspension 23% + HA 2%',brand:'The Ordinary',cat:'Serum',pros:['High concentration Vitamin C','Brightens dull skin','Affordable','Antioxidant protection'],cons:['Sandy texture','Can irritate sensitive skin','Needs adjustment period']},
-{id:'s004',name:'Skinceuticals C E Ferulic',brand:'Skinceuticals',cat:'Serum',pros:['Gold standard Vitamin C serum','C+E+Ferulic acid synergy','Proven antioxidant protection','Fades dark spots'],cons:['Extremely expensive','Hot-dog smell','Small bottle']},
-{id:'s005',name:'Paula\'s Choice C15 Super Booster',brand:'Paula\'s Choice',cat:'Serum',pros:['15% stable Vitamin C','Ferulic acid and Vitamin E','Fragrance-free'],cons:['Expensive','Online only']},
-{id:'s006',name:'Drunk Elephant C-Firma Fresh Day Serum',brand:'Drunk Elephant',cat:'Serum',pros:['Vitamin C + E + Ferulic','Pumpkin ferment brightens','No fragrance or essential oils'],cons:['Expensive','Must mix fresh each time']},
-{id:'s007',name:'La Roche-Posay Hyalu B5 Serum',brand:'La Roche-Posay',cat:'Serum',pros:['Pure hyaluronic acid + B5','Plumps fine lines','Fragrance-free'],cons:['Expensive for a HA serum']},
-{id:'s008',name:'Estee Lauder Advanced Night Repair Serum',brand:'Estee Lauder',cat:'Serum',pros:['Chronolux repair technology','Boosts overnight hydration','Glowing skin effect','Well-loved classic'],cons:['Expensive','Contains fragrance','Results vary']},
-{id:'s009',name:'Clinique Even Better Clinical Dark Spot Corrector',brand:'Clinique',cat:'Serum',pros:['Reduces dark spots','Safe for sensitive skin','Fragrance-free','Visible results in weeks'],cons:['Expensive','Slow for very dark spots']},
-{id:'s010',name:'Good Genes Lactic Acid Treatment',brand:'Sunday Riley',cat:'Serum',pros:['Lactic acid exfoliates gently','Brightens skin tone','Plumping effect'],cons:['Very expensive','Contains fragrance']},
-{id:'s011',name:'COSRX Advanced Snail 96 Mucin Power Essence',brand:'COSRX',cat:'Serum',pros:['96% snail mucin repairs skin','Hydrating and healing','Reduces redness','Affordable K-beauty'],cons:['Animal-derived ingredient concerns','Slightly sticky texture']},
-{id:'s012',name:'Pixi Glow Tonic',brand:'Pixi',cat:'Serum',pros:['5% glycolic acid','Affordable','Brightening effect','Widely available'],cons:['Some fragrance','Not as potent as clinical AHAs']},
-{id:'s013',name:'Paula\'s Choice 2% BHA Liquid Exfoliant',brand:'Paula\'s Choice',cat:'Serum',pros:['Salicylic acid unclogs pores','Reduces blackheads','Improves texture','Fragrance-free'],cons:['Pricey','Online only','Can dry sensitive skin']},
-{id:'s014',name:'Glow Recipe Watermelon Niacinamide Dew Drops',brand:'Glow Recipe',cat:'Serum',pros:['Niacinamide + HA','Dewy finish','Brightening','Vegan'],cons:['Very expensive','Fragrance included']},
-{id:'s015',name:'Kiehl\'s Powerful-Strength Line-Reducing Concentrate',brand:'Kiehl\'s',cat:'Serum',pros:['12.5% Vitamin C','Hyaluronic acid plumps','Fades fine lines','Fragrance-free'],cons:['Expensive','May irritate sensitive skin']},
-{id:'s016',name:'Ole Henriksen Truth Serum',brand:'Ole Henriksen',cat:'Serum',pros:['Vitamin C + collagen boosting','Brightening','Available at Sephora'],cons:['Contains fragrance','Not most stable Vitamin C']},
-{id:'s017',name:'Skinceuticals Discoloration Defense',brand:'Skinceuticals',cat:'Serum',pros:['Tranexamic acid for hyperpigmentation','Kojic acid and HEPES','Clinical evidence','Fragrance-free'],cons:['Very expensive','Slow results','Clinic purchase']},
-{id:'s018',name:'The Ordinary Azelaic Acid Suspension 10%',brand:'The Ordinary',cat:'Serum',pros:['Azelaic acid for acne/rosacea','Brightens dark spots','Anti-inflammatory','Affordable'],cons:['Thick texture can pill','Not the most stable formula']},
-{id:'s019',name:'Naturium Niacinamide Serum 12% + Zinc 2%',brand:'Naturium',cat:'Serum',pros:['High niacinamide concentration','Affordable','Pore minimising','Fragrance-free'],cons:['High concentration may irritate some']},
-{id:'s020',name:'Vichy LiftActiv Vitamin C Brightening Skin Corrector',brand:'Vichy',cat:'Serum',pros:['15% pure Vitamin C','Fragrance-free','Dermatologist tested'],cons:['Expensive']},
-{id:'s021',name:'Peach & Lily Glass Skin Refining Serum',brand:'Peach & Lily',cat:'Serum',pros:['Niacinamide + HA','Glass skin effect','Brightening','Vegan'],cons:['Expensive','Has fragrance']},
-{id:'s022',name:'The Ordinary Buffet Multi-Technology Peptide Serum',brand:'The Ordinary',cat:'Serum',pros:['Multiple peptide technologies','Targets multiple signs of aging','Very affordable','Fragrance-free'],cons:['Slightly sticky texture','Modest results']},
-{id:'s023',name:'Vichy Mineral 89 Hyaluronic Acid Booster',brand:'Vichy',cat:'Serum',pros:['89% Vichy mineralising water','HA booster','Strengthens skin barrier','Fragrance-free'],cons:['Expensive for a HA serum']},
-{id:'s024',name:'Timeless 20% Vitamin C + E Ferulic Acid Serum',brand:'Timeless',cat:'Serum',pros:['Comparable to Skinceuticals at fraction of cost','Effective stable formula'],cons:['Less widely available','Keep refrigerated']},
-{id:'s025',name:'CeraVe Vitamin C Serum',brand:'CeraVe',cat:'Serum',pros:['Affordable Vitamin C','10% ascorbic acid','Ceramides included','Fragrance-free'],cons:['Oxidises quickly once opened']},
-{id:'s026',name:'COSRX Propolis Light Ampule',brand:'COSRX',cat:'Serum',pros:['83% black bee propolis','Anti-inflammatory','Hydrating and healing','Affordable K-beauty'],cons:['Sticky texture','Not suitable if allergic to bee products']},
-{id:'s027',name:'Torriden Dive-In Low Molecular HA Serum',brand:'Torriden',cat:'Serum',pros:['5 types of hyaluronic acid','Deeply hydrating','Fragrance-free'],cons:['Not always easy to find']},
-{id:'s028',name:'Clarins Double Serum',brand:'Clarins',cat:'Serum',pros:['Water and oil serum phases','Plant extracts anti-aging','Luxury formula'],cons:['Very expensive','Fragrance included']},
-{id:'s029',name:'TruSkin Vitamin C Serum',brand:'TruSkin',cat:'Serum',pros:['Affordable','Vitamin C + E + HA','Available on Amazon','Good starter serum'],cons:['Less stable formula','Mild results']},
-{id:'s030',name:'Ren Radiance Perfection Serum',brand:'REN',cat:'Serum',pros:['AHA and PHA','Brightening and smoothing','Clean formula'],cons:['Expensive','Some fragrance']},
-// SUNSCREENS
-{id:'sp001',name:'La Roche-Posay Anthelios UVMune 400 SPF 50+',brand:'La Roche-Posay',cat:'Sunscreen',pros:['Broad spectrum UVA+UVB','Newest UV filters','No white cast','Lightweight','Water resistant'],cons:['Expensive','Not always easy to find']},
-{id:'sp002',name:'Altruist Dermatologist Sunscreen SPF 50',brand:'Altruist',cat:'Sunscreen',pros:['Extremely affordable','High protection','Fragrance-free option','Dermatologist formulated'],cons:['Slight white cast','Basic packaging']},
-{id:'sp003',name:'EltaMD UV Clear Broad-Spectrum SPF 46',brand:'EltaMD',cat:'Sunscreen',pros:['Zinc oxide formula','Niacinamide included','Great for acne-prone skin','Fragrance-free','Lightweight'],cons:['Expensive','Zinc can leave cast on deeper skin tones']},
-{id:'sp004',name:'Supergoop Unseen Sunscreen SPF 40',brand:'Supergoop',cat:'Sunscreen',pros:['Invisible finish','Doubles as makeup primer','Oil-free','No white cast'],cons:['Very expensive','Not water resistant']},
-{id:'sp005',name:'Biore UV Aqua Rich Watery Essence SPF 50+',brand:'Biore',cat:'Sunscreen',pros:['Japanese UV filters (very effective)','No white cast','Lightweight','Affordable','Worldwide favourite'],cons:['Not easy to find in all countries','May pill under makeup']},
-{id:'sp006',name:'Neutrogena Ultra Sheer Dry-Touch SPF 50',brand:'Neutrogena',cat:'Sunscreen',pros:['Matte dry-touch finish','Non-greasy','Widely available','Affordable'],cons:['Chemical filters','Contains fragrance','Slightly tacky']},
-{id:'sp007',name:'Bondi Sands SPF 50 Fragrance Free Face Fluid',brand:'Bondi Sands',cat:'Sunscreen',pros:['Australian standard SPF','Lightweight fluid','Fragrance-free','Affordable'],cons:['Slight white cast','Not water resistant for swimming']},
-{id:'sp008',name:'Cancer Council SPF 50+ Face Day Wear',brand:'Cancer Council',cat:'Sunscreen',pros:['Australian made and tested','High protection','Affordable','Widely available in Australia'],cons:['Some white cast','Slight scent']},
-{id:'sp009',name:'ISDIN Eryfotona Actinica SPF 50',brand:'ISDIN',cat:'Sunscreen',pros:['DNA repair enzymes','100% mineral','Repairs existing UV damage','Lightweight'],cons:['Very expensive','Not widely available']},
-{id:'sp010',name:'Invisible Zinc Tinted Mineral Moisturiser SPF 30',brand:'Invisible Zinc',cat:'Sunscreen',pros:['Zinc oxide mineral formula','Tinted for natural coverage','Available at Priceline'],cons:['SPF 30 only','Tint may not suit all tones','Contains fragrance']},
-{id:'sp011',name:'Aveeno Positively Mineral Sensitive Skin SPF 50',brand:'Aveeno',cat:'Sunscreen',pros:['100% mineral','Oat formula','Fragrance-free','Good for sensitive skin','Affordable'],cons:['Some white cast','Thick texture']},
-{id:'sp012',name:'Paula\'s Choice Extra Care Non-Greasy SPF 50',brand:'Paula\'s Choice',cat:'Sunscreen',pros:['Fragrance-free','Non-comedogenic','No white cast','Broad spectrum'],cons:['Pricey','Online only']},
-{id:'sp013',name:'Skin Aqua UV Super Moisture Gel SPF 50+',brand:'Skin Aqua',cat:'Sunscreen',pros:['Hyaluronic acid for hydration','Lightweight gel','Japanese SPF technology','No white cast'],cons:['Not always available in Western markets']},
-{id:'sp014',name:'Cetaphil Sun SPF 50 Light Gel',brand:'Cetaphil',cat:'Sunscreen',pros:['Light gel texture','Good for sensitive skin','No white cast'],cons:['Less widely available','Not water resistant for swimming']},
-{id:'sp015',name:'Murad City Skin Age Defense SPF 50',brand:'Murad',cat:'Sunscreen',pros:['Zinc oxide + environmental protection','Anti-pollution ingredients','Anti-aging SPF'],cons:['Very expensive','Heavy for oily skin']},
-{id:'sp016',name:'CeraVe AM Facial Moisturising Lotion SPF 30',brand:'CeraVe',cat:'Sunscreen',pros:['Moisturiser and SPF combined','Ceramides and HA','Fragrance-free','Affordable'],cons:['SPF 30 may not be enough outdoors','Chemical filters']},
-{id:'sp017',name:'Drunk Elephant Umbra Sheer Physical Daily Defense SPF 30',brand:'Drunk Elephant',cat:'Sunscreen',pros:['Zinc oxide mineral','Vegan formula','No fragrance or essential oils'],cons:['SPF 30 only','Very expensive for SPF level']},
-{id:'sp018',name:'Colorescience Sunforgettable SPF 50',brand:'Colorescience',cat:'Sunscreen',pros:['Mineral SPF','Anti-pollution','Multiple finishes available','Good for sensitive skin'],cons:['Extremely expensive','Available mainly online or clinics']},
-// TONERS
-{id:'t001',name:'Thayers Witch Hazel Toner',brand:'Thayers',cat:'Toner',pros:['Witch hazel tones skin','Aloe vera soothes','Affordable cult classic','Available everywhere'],cons:['Contains fragrance (rose)','Witch hazel drying for some']},
-{id:'t002',name:'Paula\'s Choice Enriched Calming Toner',brand:'Paula\'s Choice',cat:'Toner',pros:['Hydrating for dry/sensitive skin','No fragrance','Antioxidants included'],cons:['Expensive','Online only']},
-{id:'t003',name:'Klairs Supple Preparation Unscented Toner',brand:'Klairs',cat:'Toner',pros:['Fragrance-free K-beauty toner','HA and beta-glucan','Gentle for sensitive skin'],cons:['Pricier for a toner','Not always easy to find']},
-{id:'t004',name:'Some By Mi AHA BHA PHA 30 Days Miracle Toner',brand:'Some By Mi',cat:'Toner',pros:['Triple acid exfoliation','Brightening','Acne-fighting','Budget K-beauty'],cons:['Not for sensitive skin','Can over-exfoliate daily']},
-{id:'t005',name:'La Roche-Posay Serozinc Toner',brand:'La Roche-Posay',cat:'Toner',pros:['Zinc sulfate tightens pores','Controls oiliness','Calms redness','Fragrance-free','Very affordable'],cons:['Not enough hydration for dry skin']},
-{id:'t006',name:'Mario Badescu Facial Spray with Rosewater',brand:'Mario Badescu',cat:'Toner',pros:['Refreshing face mist','Aloe and rosewater calming','Affordable','Great on-the-go hydration'],cons:['Not a traditional toner','Has fragrance','Minimal skincare benefit']},
-{id:'t007',name:'COSRX AHA/BHA Clarifying Treatment Toner',brand:'COSRX',cat:'Toner',pros:['Apple water and betaine salicylate','Hydrating and mildly exfoliating','Budget-friendly'],cons:['Not fragrance-free','Mild exfoliation only']},
-{id:'t008',name:'Glossier Solution',brand:'Glossier',cat:'Toner',pros:['AHA, BHA, PHA combined','Brightens and clears skin','Easy to apply'],cons:['Expensive','Contains fragrance','Not for sensitive skin']},
-{id:'t009',name:'Kiehl\'s Calendula Herbal Extract Toner',brand:'Kiehl\'s',cat:'Toner',pros:['Alcohol-free formula','Calendula soothes','All skin types'],cons:['Expensive','No exfoliation','Contains fragrance']},
-{id:'t010',name:'Innisfree Green Tea HA Toner',brand:'Innisfree',cat:'Toner',pros:['Jeju green tea antioxidants','Hyaluronic acid hydration','Lightweight','Eco-friendly brand'],cons:['Contains fragrance','Not always available locally']},
-{id:'t011',name:'The Inkey List PHA Toner',brand:'The Inkey List',cat:'Toner',pros:['PHA gentle on sensitive skin','Hydrating exfoliator','Budget-friendly','Fragrance-free'],cons:['Mild results only']},
-{id:'t012',name:'Anua Heartleaf 77% Soothing Toner',brand:'Anua',cat:'Toner',pros:['77% heartleaf extract','Calms sensitive/acne skin','Fragrance-free','Budget K-beauty'],cons:['Not available everywhere']},
-{id:'t013',name:'Round Lab Birch Juice Moisturising Toner',brand:'Round Lab',cat:'Toner',pros:['Birch sap hydration','Lightweight','Fragrance-free','Good for dry/sensitive skin'],cons:['Not widely available']},
-{id:'t014',name:'Pixi Glow Tonic',brand:'Pixi',cat:'Toner',pros:['5% glycolic acid','Affordable','Brightening effect'],cons:['Some fragrance','Less potent than clinical AHAs']},
-{id:'t015',name:'Ren Ready Steady Glow Daily AHA Toner',brand:'REN',cat:'Toner',pros:['Lactic acid brightens gently','Radiant skin effect'],cons:['Expensive','Has fragrance']},
-// EXFOLIANTS
-{id:'e001',name:'Paula\'s Choice 2% BHA Liquid Exfoliant',brand:'Paula\'s Choice',cat:'Exfoliant',pros:['Salicylic acid exfoliates inside pores','Reduces blackheads','Fragrance-free','Globally cult product'],cons:['Pricey','Online only','Start slowly']},
-{id:'e002',name:'The Ordinary Glycolic Acid 7% Toning Solution',brand:'The Ordinary',cat:'Exfoliant',pros:['7% glycolic acid','Very affordable','Brightening and smoothing','Fragrance-free'],cons:['Can irritate if overused','Not for sensitive skin beginners']},
-{id:'e003',name:'Alpha-H Liquid Gold',brand:'Alpha-H',cat:'Exfoliant',pros:['5% glycolic acid','Visible overnight results','Iconic Australian product'],cons:['Expensive','Contains fragrance','Not for sensitive skin']},
-{id:'e004',name:'COSRX BHA Blackhead Power Liquid',brand:'COSRX',cat:'Exfoliant',pros:['Betaine salicylate (gentler BHA)','Decongests pores','Affordable K-beauty','Fragrance-free'],cons:['Milder than Paula\'s Choice BHA']},
-{id:'e005',name:'Drunk Elephant T.L.C. Framboos Glycolic Night Serum',brand:'Drunk Elephant',cat:'Exfoliant',pros:['AHA/BHA combination','No fragrance or essential oils','Effective overnight exfoliation'],cons:['Very expensive','Small bottle']},
-{id:'e006',name:'Glow Recipe Watermelon Glow AHA Night Treatment',brand:'Glow Recipe',cat:'Exfoliant',pros:['AHA + PHA combination','Watermelon and HA hydrate','Brightening','Vegan'],cons:['Expensive','Some fragrance']},
-{id:'e007',name:'The Inkey List Glycolic Acid Toner',brand:'The Inkey List',cat:'Exfoliant',pros:['10% glycolic acid','Very affordable','Brightens skin'],cons:['Can irritate beginners','Some fragrance']},
-{id:'e008',name:'Stridex Maximum Strength Pads',brand:'Stridex',cat:'Exfoliant',pros:['2% salicylic acid','Extremely cheap','Convenient pads','US drugstore staple for acne'],cons:['Contains fragrance','Alcohol in formula','Not available in all countries']},
-{id:'e009',name:'Medik8 Press & Clear BHA Toner',brand:'Medik8',cat:'Exfoliant',pros:['Salicylic acid + encapsulated retinol','Dual-action exfoliant'],cons:['Very expensive','Not for beginners']},
-{id:'e010',name:'Revolution Skincare 5% Lactic Acid Serum',brand:'Revolution',cat:'Exfoliant',pros:['Gentle lactic acid','Budget-friendly','Good starter AHA'],cons:['Basic formula','Not fragrance-free']},
-// RETINOLS
-{id:'r001',name:'Differin Adapalene Gel 0.1%',brand:'Differin',cat:'Retinol',pros:['Prescription-strength retinoid OTC in USA','Proven for acne and anti-aging','Affordable','Once-nightly use'],cons:['Initial purging and dryness','Not OTC in all countries','Requires adjustment period']},
-{id:'r002',name:'The Ordinary Granactive Retinoid 2% Emulsion',brand:'The Ordinary',cat:'Retinol',pros:['Gentler retinoid alternative','Less irritating than retinol','Very affordable','Good starter retinoid'],cons:['Less effective than true retinol','Slow results']},
-{id:'r003',name:'Paula\'s Choice 1% Retinol Treatment',brand:'Paula\'s Choice',cat:'Retinol',pros:['High concentration retinol','Antioxidants added','Fragrance-free'],cons:['Expensive','Not for beginners','Online only']},
-{id:'r004',name:'Medik8 Crystal Retinal 1',brand:'Medik8',cat:'Retinol',pros:['Retinaldehyde more effective than retinol','Gentler than prescription retinoids','Fragrance-free'],cons:['Expensive','Only start 1–2 nights per week']},
-{id:'r005',name:'Medik8 Crystal Retinal 6',brand:'Medik8',cat:'Retinol',pros:['Retinaldehyde intermediate strength','Encapsulated for stability','Fragrance-free'],cons:['Very expensive','Only for experienced retinol users']},
-{id:'r006',name:'La Roche-Posay Redermic Retinol Serum',brand:'La Roche-Posay',cat:'Retinol',pros:['Formulated for sensitive skin','Lower concentration gentler entry','Fragrance-free'],cons:['Not as effective as prescription retinoids','Expensive for concentration']},
-{id:'r007',name:'CeraVe Resurfacing Retinol Serum',brand:'CeraVe',cat:'Retinol',pros:['Encapsulated retinol for stability','Ceramides protect barrier','Niacinamide included','Affordable','Fragrance-free'],cons:['Lower retinol concentration','May not suit advanced users']},
-{id:'r008',name:'Olay Regenerist Retinol 24 Night Moisturiser',brand:'Olay',cat:'Retinol',pros:['Affordable retinol option','Fragrance-free formula','Hydrating at same time','Available at supermarkets'],cons:['Lower retinol concentration','Slower results']},
-{id:'r009',name:'RoC Retinol Correxion Deep Wrinkle Night Cream',brand:'RoC',cat:'Retinol',pros:['Classic retinol product','Affordable','Reduces fine lines','Widely available'],cons:['Contains fragrance','Slow results']},
-{id:'r010',name:'Dermatica Prescription Tretinoin Cream',brand:'Dermatica',cat:'Retinol',pros:['Prescription-strength tretinoin','Most evidence-based anti-aging ingredient','Dermatologist-supervised subscription'],cons:['Requires subscription','Initial irritation/peeling','Strict sun protection needed','Not for pregnant women']},
-// FACE OILS
-{id:'fo001',name:'The Ordinary 100% Organic Cold-Pressed Rose Hip Seed Oil',brand:'The Ordinary',cat:'Face Oil',pros:['Vitamin A rich rosehip oil','Fades scars and dark spots','Very affordable','Natural and vegan'],cons:['Can oxidise quickly','Not for acne-prone skin','Strong smell']},
-{id:'fo002',name:'Drunk Elephant Virgin Marula Luxury Facial Oil',brand:'Drunk Elephant',cat:'Face Oil',pros:['High oleic acid nourishes','Non-fragrant','Non-comedogenic','Fast absorbing'],cons:['Very expensive','Small bottle']},
-{id:'fo003',name:'Biossance 100% Squalane Oil',brand:'Biossance',cat:'Face Oil',pros:['Plant-derived squalane','Non-comedogenic','Lightweight','Suitable for all skin types','Fragrance-free'],cons:['Expensive']},
-{id:'fo004',name:'Kiehl\'s Midnight Recovery Concentrate',brand:'Kiehl\'s',cat:'Face Oil',pros:['Evening primrose and lavender','Overnight skin repair','Good for dry skin'],cons:['Expensive','Has fragrance/essential oils','Not for acne-prone skin']},
-{id:'fo005',name:'Nuxe Huile Prodigieuse',brand:'Nuxe',cat:'Face Oil',pros:['Multi-use dry oil (face, body, hair)','Iconic French pharmacy product'],cons:['Has fragrance','Not for acne-prone skin','Greasy on oily skin']},
-{id:'fo006',name:'Trilogy Certified Organic Rosehip Oil',brand:'Trilogy',cat:'Face Oil',pros:['High quality certified organic','Reduces scars and stretch marks','Available at Priceline and Chemist Warehouse'],cons:['Pricey for an oil','Natural rosehip smell','Not for oily skin']},
-{id:'fo007',name:'Sunday Riley Luna Sleeping Night Oil',brand:'Sunday Riley',cat:'Face Oil',pros:['Trans-retinol ester in oil form','Blue tansy soothes redness','Good for dry skin needing retinoid'],cons:['Very expensive','Contains fragrance/essential oils']},
-{id:'fo008',name:'The Inkey List Rosehip Oil',brand:'The Inkey List',cat:'Face Oil',pros:['Affordable rosehip oil','High in vitamin A precursors','Good for fading marks'],cons:['Oxidises quickly','Not for oily/acne-prone skin']},
-{id:'fo009',name:'Weleda Skin Food Face Oil',brand:'Weleda',cat:'Face Oil',pros:['Natural nourishing oils','Multi-purpose','Dry skin saviour'],cons:['Strong fragrance','Not for acne-prone skin']},
-{id:'fo010',name:'Herbivore Botanicals Lapis Blue Tansy Oil',brand:'Herbivore Botanicals',cat:'Face Oil',pros:['Blue tansy reduces redness','Calming formula','Natural and vegan'],cons:['Very expensive','Essential oils can irritate sensitive skin']},
-// FACE MASKS
-{id:'fmask001',name:'Aztec Secret Indian Healing Clay',brand:'Aztec Secret',cat:'Face Mask',pros:['100% natural calcium bentonite clay','Deep pore cleanse','Very affordable','Large amount per tub'],cons:['Drying if left too long','Messy to prepare','Strong natural smell']},
-{id:'fmask002',name:'GlamGlow Supermud Clearing Treatment',brand:'GlamGlow',cat:'Face Mask',pros:['K17+ acids and charcoal','Deep pore cleansing','Visible results in 20 mins','Targets blackheads'],cons:['Very expensive','Limited uses per tube','Has fragrance']},
-{id:'fmask003',name:'Laneige Water Sleeping Mask',brand:'Laneige',cat:'Face Mask',pros:['Overnight hydration','HUNECTO water absorption technology','Wake up with plump skin','Cult K-beauty product'],cons:['Expensive','Has fragrance']},
-{id:'fmask004',name:'Glow Recipe Watermelon + AHA Glow Sleeping Mask',brand:'Glow Recipe',cat:'Face Mask',pros:['AHA exfoliates overnight','Hyaluronic acid hydrates','Wake up glowing','Vegan'],cons:['Very expensive','Has fragrance','AHA makes skin photosensitive']},
-{id:'fmask005',name:'First Aid Beauty Skin Rescue Purifying Mask',brand:'First Aid Beauty',cat:'Face Mask',pros:['Charcoal draws out impurities','Colloidal oatmeal soothes','No fragrance','Sensitive skin suitable'],cons:['Expensive for a mask','Modest results']},
-{id:'fmask006',name:'Origins Clear Improvement Active Charcoal Mask',brand:'Origins',cat:'Face Mask',pros:['Bamboo charcoal','White China clay','Removes impurities'],cons:['Expensive','Has fragrance']},
-{id:'fmask007',name:'L\'Oreal Pure Clay Mask Exfoliate & Refine Pores',brand:'L\'Oreal Paris',cat:'Face Mask',pros:['Affordable','Three pure clays','Refines pores','At supermarkets'],cons:['Can be drying','Has fragrance','Temporary results']},
-{id:'fmask008',name:'Neutrogena Hydro Boost Hydrating Gel Mask',brand:'Neutrogena',cat:'Face Mask',pros:['Hyaluronic acid gel mask','Instantly plumps','Affordable','Non-comedogenic'],cons:['Temporary hydration only','Some fragrance']},
-{id:'fmask009',name:'Peter Thomas Roth Instant FIRMx Face Tightener',brand:'Peter Thomas Roth',cat:'Face Mask',pros:['Instant tightening effect','Visible result in minutes','Good before events'],cons:['Results temporary only','Very expensive']},
-{id:'fmask010',name:'Sisley Paris Black Rose Cream Mask',brand:'Sisley',cat:'Face Mask',pros:['Ultra-luxury formula','Black rose extract anti-aging','Intensely hydrating'],cons:['Extraordinarily expensive','Has fragrance']},
-// ESSENCES
-{id:'ess001',name:'SK-II Facial Treatment Essence',brand:'SK-II',cat:'Essence',pros:['Pitera (galactomyces ferment filtrate)','Iconic luxury essence','Brightening and anti-aging'],cons:['Extremely expensive','Strong smell']},
-{id:'ess002',name:'Missha Time Revolution The First Treatment Essence',brand:'Missha',cat:'Essence',pros:['Considered SK-II dupe','Fermented yeast 78%','Brightening and hydrating'],cons:['Has fragrance']},
-{id:'ess003',name:'COSRX Galactomyces 95 Tone Balancing Essence',brand:'COSRX',cat:'Essence',pros:['95% galactomyces','Brightening and pore minimising','Affordable'],cons:['Some fragrance','Galactomyces can cause purging']},
-{id:'ess004',name:'Tatcha The Essence Plumping Skin Softener',brand:'Tatcha',cat:'Essence',pros:['Fermented Japanese ingredients','Boosts next product absorption','Luxury ritual feel'],cons:['Very expensive','Hard to justify cost']},
-// MISTS
-{id:'mi001',name:'Evian Natural Mineral Water Face Mist',brand:'Evian',cat:'Mist',pros:['Pure mineral water','No additives or fragrance','Refreshes makeup','Universally gentle'],cons:['No active ingredients','Just water essentially']},
-{id:'mi002',name:'Caudalie Beauty Elixir',brand:'Caudalie',cat:'Mist',pros:['Grape extract antioxidants','Sets makeup beautifully','Cult French pharmacy product'],cons:['Very expensive for a mist','Has fragrance']},
-{id:'mi003',name:'Mario Badescu Facial Spray with Rosewater',brand:'Mario Badescu',cat:'Mist',pros:['Affordable','Refreshing','Aloe and rosewater soothing','Available at Priceline'],cons:['Has fragrance','No active skincare ingredients']},
-{id:'mi004',name:'Tatcha Luminous Dewy Skin Mist',brand:'Tatcha',cat:'Mist',pros:['Hyaluronic acid and Japanese botanicals','Dewy finish after application'],cons:['Very expensive for a face mist','Has fragrance']},
-// EYE CREAMS
-{id:'ey001',name:'Kiehl\'s Creamy Eye Treatment with Avocado',brand:'Kiehl\'s',cat:'Eye Cream',pros:['Rich avocado formula','Hydrates dry eye area','Gentle fragrance-free formula'],cons:['Expensive','Too heavy for puffy eyes','Minimal anti-aging benefit']},
-{id:'ey002',name:'La Roche-Posay Pigmentclar Eyes',brand:'La Roche-Posay',cat:'Eye Cream',pros:['Targets dark circles','Caffeine and LHA','Cooling applicator','Fragrance-free'],cons:['Expensive','Modest results for structural dark circles']},
-{id:'ey003',name:'Neutrogena Rapid Wrinkle Repair Eye Cream',brand:'Neutrogena',cat:'Eye Cream',pros:['Retinol formula','Affordable','Widely available','Reduces fine lines'],cons:['Can cause irritation','Fragrance included']},
-{id:'ey004',name:'Clinique All About Eyes Rich',brand:'Clinique',cat:'Eye Cream',pros:['Fragrance-free','Moisturises very dry eye area','Reduces puffiness','Ophthalmologist tested'],cons:['Expensive','Limited anti-aging actives']},
-{id:'ey005',name:'Olay Eyes Ultimate Eye Cream',brand:'Olay',cat:'Eye Cream',pros:['Tinted to cover dark circles','Peptides and B3','Affordable'],cons:['Tint not for all skin tones','Has fragrance']},
-// LIP CARE
-{id:'lip001',name:'Laneige Lip Sleeping Mask',brand:'Laneige',cat:'Lip Care',pros:['Overnight lip hydration','Berry Mix Complex','Glossy finish','Cult K-beauty lip treatment'],cons:['Expensive for lip care']},
-{id:'lip002',name:'CeraVe Healing Ointment',brand:'CeraVe',cat:'Lip Care',pros:['Petrolatum occlusive barrier','Heals extremely dry/cracked lips','Multi-purpose ointment','Very affordable'],cons:['Greasy feel','Not a dedicated lip product']},
-{id:'lip003',name:'Aquaphor Healing Ointment',brand:'Eucerin',cat:'Lip Care',pros:['Occlusive barrier heals chapped lips','Fragrance-free','Affordable','Available everywhere'],cons:['Greasy texture','Not a dedicated lip balm']},
-{id:'lip004',name:'The Ordinary Natural Lip Serum',brand:'The Ordinary',cat:'Lip Care',pros:['Hyaluronic acid plumps lips','Affordable','Fragrance-free'],cons:['Plumping effect minimal']},
-// Additional popular products
-{id:'x001',name:'The Inkey List Hyaluronic Acid Serum',brand:'The Inkey List',cat:'Serum',pros:['Affordable HA serum','Multiple HA sizes','Good for all skin types','Fragrance-free'],cons:['Apply to damp skin','Not moisturising alone']},
-{id:'x002',name:'The Inkey List Retinol Serum',brand:'The Inkey List',cat:'Retinol',pros:['1% retinol beginner-friendly','Affordable','Squalane added for comfort','Fragrance-free'],cons:['May cause initial dryness','Results take months']},
-{id:'x003',name:'Dermalogica BioLumin-C Serum',brand:'Dermalogica',cat:'Serum',pros:['Stable Vitamin C complex','Brightens and firms','Professional brand pedigree'],cons:['Very expensive','Only at Dermalogica stockists']},
-{id:'x004',name:'Skinceuticals Phyto Corrective Gel',brand:'Skinceuticals',cat:'Serum',pros:['Cucumber and botanical extracts','Calms redness','Good for sensitive and rosacea skin','Fragrance-free'],cons:['Expensive','Mainly soothing']},
-{id:'x005',name:'NIOD Copper Amino Isolate Serum',brand:'NIOD',cat:'Serum',pros:['Copper tripeptide for anti-aging','Advanced formula','Fragrance-free'],cons:['Extremely expensive','Complex instructions','Niche brand']},
-{id:'x006',name:'Caudalie Vinoperfect Radiance Serum',brand:'Caudalie',cat:'Serum',pros:['Viniferine brightens dark spots','Good for uneven skin tone'],cons:['Very expensive','Slow results']},
-{id:'x007',name:'Herbivore Bakuchiol Retinol Alternative Serum',brand:'Herbivore Botanicals',cat:'Serum',pros:['Vegan retinol alternative','Suitable for pregnancy','Gentle natural formula'],cons:['Expensive for the effect','Slower results than retinol']},
-{id:'x008',name:'The Inkey List Bakuchiol Moisturizer',brand:'The Inkey List',cat:'Moisturiser',pros:['Bakuchiol plant-based retinol alternative','Good for sensitive skin','Can use AM and PM','Affordable'],cons:['Less effective than retinol','Modest anti-aging results']},
-{id:'x009',name:'Murad Rapid Age Spot Correcting Serum',brand:'Murad',cat:'Serum',pros:['Glycolic acid + brightening agents','Effective on dark spots','Clinical evidence'],cons:['Expensive','Not for sensitive skin']},
-{id:'x010',name:'Revision Skincare Intellishade TruPhysical SPF 45',brand:'Revision',cat:'Sunscreen',pros:['Tinted mineral SPF','Anti-aging peptides','Good coverage'],cons:['Expensive','Clinical brand access only']},
+// ══ IRRITANTS DB ══
+const IRRITANTS={
+  // High risk
+  'fragrance':{level:'high',reason:'Common allergen, can cause contact dermatitis'},
+  'parfum':{level:'high',reason:'Fragrance — common allergen and irritant'},
+  'alcohol denat':{level:'high',reason:'Drying alcohol that can disrupt skin barrier'},
+  'denatured alcohol':{level:'high',reason:'Drying alcohol that disrupts skin barrier'},
+  'sd alcohol':{level:'high',reason:'Drying alcohol, can cause irritation'},
+  'formaldehyde':{level:'high',reason:'Preservative allergen and potential carcinogen'},
+  'methylisothiazolinone':{level:'high',reason:'Preservative linked to skin allergies'},
+  'methylchloroisothiazolinone':{level:'high',reason:'Preservative — high sensitisation risk'},
+  'benzalkonium chloride':{level:'high',reason:'Harsh preservative can disrupt skin barrier'},
+  'parabens':{level:'medium',reason:'Preservatives with some hormone-disruption concerns'},
+  'propylparaben':{level:'medium',reason:'Paraben preservative — hormone disruption concerns'},
+  'butylparaben':{level:'medium',reason:'Paraben preservative — strongest hormone concerns'},
+  // Medium risk
+  'sodium lauryl sulfate':{level:'medium',reason:'Harsh surfactant that strips natural oils'},
+  'sls':{level:'medium',reason:'Harsh surfactant that strips natural oils'},
+  'sodium laureth sulfate':{level:'medium',reason:'Milder than SLS but can cause irritation'},
+  'sles':{level:'medium',reason:'Surfactant — can irritate sensitive skin'},
+  'phenoxyethanol':{level:'medium',reason:'Preservative — generally safe but can irritate sensitive skin'},
+  'essential oils':{level:'medium',reason:'Natural but can be potent allergens'},
+  'lavender oil':{level:'medium',reason:'Essential oil — can disrupt hormones and cause allergies'},
+  'tea tree oil':{level:'medium',reason:'Antimicrobial but can irritate sensitive skin'},
+  'peppermint oil':{level:'medium',reason:'Strong essential oil — can cause irritation'},
+  'citric acid':{level:'medium',reason:'AHA — can cause sensitivity in high concentrations'},
+  'retinol':{level:'medium',reason:'Active ingredient — causes purging and sensitivity initially'},
+  'glycolic acid':{level:'medium',reason:'AHA — can cause irritation and photosensitivity'},
+  'salicylic acid':{level:'medium',reason:'BHA — avoid if aspirin-sensitive; can dry skin'},
+  'benzoyl peroxide':{level:'medium',reason:'Can bleach fabric and cause dryness'},
+  'hydroquinone':{level:'medium',reason:'Skin lightener — restricted in some countries; use monitored'},
+  'lactic acid':{level:'medium',reason:'AHA — gentle but can cause sensitivity'},
+  'kojic acid':{level:'medium',reason:'Brightener — can cause irritation in some'},
+  'oxybenzone':{level:'medium',reason:'Chemical UV filter with hormone disruption concerns'},
+  // Low risk / comedogenic
+  'isopropyl myristate':{level:'low',reason:'Comedogenic — may clog pores'},
+  'cocoa butter':{level:'low',reason:'Comedogenic — may clog pores for acne-prone skin'},
+  'coconut oil':{level:'low',reason:'Highly comedogenic — clogs pores for many skin types'},
+  'lanolin':{level:'low',reason:'Animal-derived, can be allergenic for some'},
+  'mineral oil':{level:'low',reason:'Occlusive — not harmful but can clog pores for some'},
+  'petrolatum':{level:'low',reason:'Occlusive — generally safe but feels heavy'},
+  'dimethicone':{level:'low',reason:'Silicone — generally safe but can trap debris in pores'},
+};
+
+// ══ CONFLICTS DB ══
+const CONFLICTS=[
+  {a:'retinol',b:'glycolic acid',level:'high',msg:'Retinol + Glycolic Acid — both are potent actives. Using together increases risk of severe irritation, redness and barrier damage. Use on alternate nights.'},
+  {a:'retinol',b:'lactic acid',level:'high',msg:'Retinol + Lactic Acid — both are strong actives. Can cause excessive dryness and peeling. Use on alternate nights.'},
+  {a:'retinol',b:'salicylic acid',level:'high',msg:'Retinol + Salicylic Acid — very drying combination. Can over-exfoliate and damage skin barrier. Use on separate nights.'},
+  {a:'retinol',b:'benzoyl peroxide',level:'high',msg:'Retinol + Benzoyl Peroxide — benzoyl peroxide can oxidise and inactivate retinol, wasting both products. Use at different times.'},
+  {a:'vitamin c',b:'glycolic acid',level:'medium',msg:'Vitamin C + Glycolic Acid — both are acidic. Can cause irritation together. Vitamin C in the AM, AHAs in PM is the safer approach.'},
+  {a:'vitamin c',b:'niacinamide',level:'low',msg:'Vitamin C + Niacinamide — older research suggested conflict but modern formulations are generally fine. Slight flushing possible; can be used together.'},
+  {a:'glycolic acid',b:'salicylic acid',level:'medium',msg:'Glycolic Acid + Salicylic Acid — double exfoliation. Can cause significant irritation and over-exfoliation. Use one at a time.'},
+  {a:'retinol',b:'vitamin c',level:'medium',msg:'Retinol + Vitamin C — Vitamin C works best at low pH; retinol at higher pH. Use Vitamin C in AM and retinol PM for best results.'},
+  {a:'benzoyl peroxide',b:'niacinamide',level:'low',msg:'Benzoyl Peroxide + Niacinamide — can cause temporary yellowing of niacinamide. Not harmful but not ideal. Use at different times.'},
+  {a:'aha',b:'bha',level:'low',msg:'AHA + BHA — double exfoliation. Fine occasionally but daily combined use can cause over-exfoliation and sensitivity.'},
 ];
 
+// ══ BADGES ══
+const BADGES=[
+  {id:'b1',icon:'🌸',name:'First Step',desc:'Log your first day',check:()=>entries.length>=1},
+  {id:'b2',icon:'🔥',name:'3-Day Streak',desc:'3 days consistent',check:()=>getStreak()>=3},
+  {id:'b3',icon:'💪',name:'One Week',desc:'7 days consistent',check:()=>getStreak()>=7},
+  {id:'b4',icon:'🌟',name:'Two Weeks',desc:'14 days consistent',check:()=>getStreak()>=14},
+  {id:'b5',icon:'👑',name:'One Month',desc:'30 days consistent',check:()=>getStreak()>=30},
+  {id:'b6',icon:'✨',name:'Glow Up',desc:'Log 10 days total',check:()=>entries.length>=10},
+  {id:'b7',icon:'📸',name:'Photographer',desc:'Add a skin photo',check:()=>skinPhotos.length>=1},
+  {id:'b8',icon:'🧴',name:'Product Nerd',desc:'Add a custom product',check:()=>userProducts.length>=1},
+  {id:'b9',icon:'🛒',name:'Shopper',desc:'Add to shopping list',check:()=>shopList.length>=1},
+  {id:'b10',icon:'🧪',name:'Lab Rat',desc:'Use the ingredient checker',check:()=>load('sm_ingr_used',false)},
+  {id:'b11',icon:'😊',name:'Confident',desc:'Log confidence 8+ five times',check:()=>entries.filter(e=>e.conf>=8).length>=5},
+  {id:'b12',icon:'💎',name:'Skincare Guru',desc:'Log 30 days total',check:()=>entries.length>=30},
+];
+
+const MILESTONES=[
+  {pts:10,icon:'🌷',name:'Seedling',desc:'Earn your first 10 points'},
+  {pts:50,icon:'🌿',name:'Growing',desc:'Reach 50 points'},
+  {pts:100,icon:'🌺',name:'Blooming',desc:'Reach 100 points'},
+  {pts:250,icon:'🌻',name:'Flourishing',desc:'Reach 250 points'},
+  {pts:500,icon:'💫',name:'Radiant',desc:'Reach 500 points'},
+  {pts:1000,icon:'👑',name:'Skincare Queen',desc:'Reach 1000 points'},
+];
+
+// ══ SKIN TYPE QUIZ ══
+const QUIZ=[
+  {q:'How does your skin feel by midday?',opts:['Tight and dry','Balanced','Shiny all over','Shiny only on forehead/nose/chin','Reactive or red']},
+  {q:'How often do you get breakouts?',opts:['Rarely','Occasionally','Frequently','Only around my T-zone','Mostly when I try new products']},
+  {q:'How does your skin feel after cleansing?',opts:['Very tight and uncomfortable','Clean but normal','Instantly oily','Tight in some areas, oily in others','Sensitive or stings slightly']},
+  {q:'What is your biggest skin concern?',opts:['Dry patches and flaking','Dullness','Pores and excess oil','Uneven texture','Redness and sensitivity']},
+];
+
+const SKIN_TYPES={
+  'Dry':['CeraVe Moisturising Cream','La Roche-Posay Toleriane Hydrating Gentle Cleanser','Neutrogena Hydro Boost Water Gel','Hada Labo Gokujyun Premium Lotion','The Ordinary Hyaluronic Acid 2% + B5','Tatcha The Water Cream'],
+  'Oily':['CeraVe Foaming Facial Cleanser','La Roche-Posay Effaclar Purifying Foaming Gel','Neutrogena Hydro Boost Water Gel','The Ordinary Niacinamide 10% + Zinc 1%','Paula\'s Choice 2% BHA Liquid Exfoliant','Biore UV Aqua Rich Watery Essence SPF 50+'],
+  'Combination':['CeraVe Hydrating Cleanser','La Roche-Posay Toleriane Double Repair Moisturiser','The Ordinary Niacinamide 10% + Zinc 1%','Klairs Supple Preparation Unscented Toner','EltaMD UV Clear SPF 46','COSRX BHA Blackhead Power Liquid'],
+  'Sensitive':['Vanicream Gentle Facial Cleanser','La Roche-Posay Toleriane Hydrating Gentle Cleanser','Avene Tolerance Extreme Emulsion','Cetaphil Gentle Skin Cleanser','The Ordinary Natural Moisturizing Factors + HA','ISDIN Eryfotona Actinica SPF 50'],
+  'Normal':['CeraVe Hydrating Cleanser','The Ordinary Niacinamide 10% + Zinc 1%','Kiehl\'s Ultra Facial Cream','The Ordinary Hyaluronic Acid 2% + B5','La Roche-Posay Anthelios UVMune 400 SPF 50+','Pixi Glow Tonic'],
+};
+
+// ══ STATE ══
 let state={am:[false,false,false],pm:[false,false,false],mood:null,skin:null,conf:5,notes:''};
-let entries=[];
-let userProducts=[];
-let activeFilter='All';
-let editingId=null;
+let entries=[],userProducts=[],reminders=[],shopList=[],skinPhotos=[],quizAnswers=[],editingId=null,activeFilter='All',rTimers=[];
+let pts=0;
 
-try{entries=JSON.parse(localStorage.getItem('skinmind_v2')||'[]');}catch(e){}
-try{userProducts=JSON.parse(localStorage.getItem('skinmind_products')||'[]');}catch(e){}
+function load(k,def){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):def;}catch(e){return def;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-function getAllProducts(){return[...DB,...userProducts.map(p=>({...p,custom:true}))];}
-function getCategories(){
-  const all=getAllProducts();
-  const cats=[...new Set(all.map(p=>p.cat||p.category))].sort();
-  return['All',...cats];
+function loadAll(){
+  entries=load('sm_entries',[]);
+  userProducts=load('sm_products',[]);
+  reminders=load('sm_reminders',[]);
+  shopList=load('sm_shop',[]);
+  skinPhotos=load('sm_photos',[]);
+  pts=load('sm_pts',0);
 }
 
+// ══ TOAST ══
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ══ ROUTINES ══
 function renderSteps(steps,arr,prefix,fillId,textId){
   const el=document.getElementById(prefix+'-steps');
   el.innerHTML='';
   steps.forEach((s,i)=>{
     const d=document.createElement('div');
     d.className='step';
-    d.innerHTML=`<div class="cb${arr[i]?' on':''}" id="${prefix}-cb-${i}"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-info"><div class="step-name">${s.name}</div><div class="step-sub">${s.sub}</div></div>`;
+    d.innerHTML=`<div class="cb${arr[i]?' on':''}"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="si"><div class="sn">${s.name}</div><div class="ss">${s.sub}</div></div>`;
     d.onclick=()=>{arr[i]=!arr[i];renderSteps(steps,arr,prefix,fillId,textId);};
     el.appendChild(d);
   });
@@ -511,8 +555,8 @@ function renderMoods(){
     grid.innerHTML='';
     arr.forEach(([emoji,label],i)=>{
       const b=document.createElement('button');
-      b.className='mood-btn'+(sel===i?' on':'');
-      b.innerHTML=`<span class="mood-emoji">${emoji}</span><span class="mood-label">${label}</span>`;
+      b.className='mb'+(sel===i?' on':'');
+      b.innerHTML=`<span class="me">${emoji}</span><span class="ml">${label}</span>`;
       b.onclick=()=>{if(type==='mood')state.mood=i;else state.skin=i;renderMoods();};
       grid.appendChild(b);
     });
@@ -523,9 +567,10 @@ function renderConfDots(){
   const v=parseInt(document.getElementById('conf-slider').value);
   const el=document.getElementById('conf-dots');
   el.innerHTML='';
-  for(let i=1;i<=10;i++){const d=document.createElement('div');d.className='conf-dot'+(i<=v?' filled':'');el.appendChild(d);}
+  for(let i=1;i<=10;i++){const d=document.createElement('div');d.className='cdot'+(i<=v?' filled':'');el.appendChild(d);}
 }
 
+// ══ SAVE TODAY ══
 function saveEntry(){
   const today=new Date().toISOString().split('T')[0];
   const conf=parseInt(document.getElementById('conf-slider').value);
@@ -533,50 +578,403 @@ function saveEntry(){
   const entry={date:today,am:[...state.am],pm:[...state.pm],mood:state.mood,skin:state.skin,conf,notes};
   const idx=entries.findIndex(e=>e.date===today);
   if(idx>=0)entries[idx]=entry;else entries.unshift(entry);
-  try{localStorage.setItem('skinmind_v2',JSON.stringify(entries));}catch(e){}
-  renderLog();
+  save('sm_entries',entries);
+  // points
+  const earned=[];
+  const amDone=state.am.filter(Boolean).length;
+  const pmDone=state.pm.filter(Boolean).length;
+  if(amDone===3)earned.push(15);
+  if(pmDone===3)earned.push(15);
+  if(amDone>0||pmDone>0)earned.push(5);
+  const streak=getStreak();
+  if(streak===3){earned.push(30);toast('🔥 3-day streak bonus! +30 pts');}
+  if(streak===7){earned.push(70);toast('💪 One Week streak bonus! +70 pts');}
+  if(streak===14){earned.push(150);toast('🌟 Two Week streak bonus! +150 pts');}
+  if(streak===30){earned.push(300);toast('👑 One Month streak bonus! +300 pts');}
+  pts+=earned.reduce((a,b)=>a+b,0);
+  save('sm_pts',pts);
+  checkBadges();
+  renderLog();renderInsights();renderRewards();
   const btn=document.getElementById('save-btn');
   btn.textContent='Saved ✓';btn.classList.add('saved');
   setTimeout(()=>{btn.textContent='Save today';btn.classList.remove('saved');},2000);
 }
 
-function renderLog(){
-  if(!entries.length){
-    document.getElementById('log-list').innerHTML='<div class="empty">Complete your first day to see your log</div>';
-    document.getElementById('stat-avg').textContent='—';
-    document.getElementById('stat-days').textContent='0';
-    document.getElementById('stat-streak').textContent='0';
-    document.getElementById('streak-pill').textContent='0 day streak';
-    return;
-  }
-  const list=document.getElementById('log-list');
-  list.innerHTML='';
-  entries.slice(0,30).forEach(e=>{
-    const amDone=e.am.filter(Boolean).length;
-    const pmDone=e.pm.filter(Boolean).length;
-    const moodLabel=e.mood!==null?MOODS[e.mood][0]+' '+MOODS[e.mood][1]:'';
-    const skinLabel=e.skin!==null?SKIN[e.skin][0]+' '+SKIN[e.skin][1]:'';
-    const d=document.createElement('div');
-    d.className='log-entry';
-    const dateStr=new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
-    d.innerHTML=`<div class="log-date">${dateStr}</div><div class="log-main"><span class="log-steps">AM ${amDone}/3 &middot; PM ${pmDone}/3</span><span class="log-conf">Confidence ${e.conf}/10</span></div><div class="log-badges">${moodLabel?`<span class="badge">${moodLabel}</span>`:''}${skinLabel?`<span class="badge">Skin: ${skinLabel}</span>`:''}</div>${e.notes?`<div class="log-note">"${e.notes}"</div>`:''}`;
-    list.appendChild(d);
-  });
-  const avg=(entries.reduce((s,e)=>s+e.conf,0)/entries.length).toFixed(1);
-  document.getElementById('stat-avg').textContent=avg;
-  document.getElementById('stat-days').textContent=entries.length;
+// ══ LOG ══
+function getStreak(){
+  if(!entries.length)return 0;
   let streak=0;
   const now=new Date();now.setHours(12,0,0,0);
   for(let i=0;i<entries.length;i++){
     const d=new Date(entries[i].date+'T12:00:00');
-    const diff=Math.round((now-d)/(1000*60*60*24));
+    const diff=Math.round((now-d)/(864e5));
     if(diff===i)streak++;else break;
   }
-  document.getElementById('stat-streak').textContent=streak;
-  document.getElementById('streak-pill').textContent=streak+' day streak';
+  return streak;
 }
 
-function saveUserProducts(){try{localStorage.setItem('skinmind_products',JSON.stringify(userProducts));}catch(e){}}
+function renderLog(){
+  const streak=getStreak();
+  document.getElementById('stat-streak').textContent=streak;
+  document.getElementById('streak-pill').textContent=streak+' day streak';
+  document.getElementById('stat-days').textContent=entries.length;
+  document.getElementById('stat-avg').textContent=entries.length?(entries.reduce((s,e)=>s+e.conf,0)/entries.length).toFixed(1):'—';
+  const list=document.getElementById('log-list');
+  if(!entries.length){list.innerHTML='<div class="empty">No entries yet</div>';return;}
+  list.innerHTML='';
+  entries.slice(0,30).forEach(e=>{
+    const amD=e.am.filter(Boolean).length,pmD=e.pm.filter(Boolean).length;
+    const ml=e.mood!==null?MOODS[e.mood][0]+' '+MOODS[e.mood][1]:'';
+    const sl=e.skin!==null?SKIN[e.skin][0]+' '+SKIN[e.skin][1]:'';
+    const d=document.createElement('div');d.className='le';
+    const ds=new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+    d.innerHTML=`<div class="ld">${ds}</div><div class="lm"><span class="ls">AM ${amD}/3 · PM ${pmD}/3</span><span class="lc">Confidence ${e.conf}/10</span></div><div class="lbg">${ml?`<span class="bg">${ml}</span>`:''}${sl?`<span class="bg">Skin: ${sl}</span>`:''}</div>${e.notes?`<div class="ln">"${e.notes}"</div>`:''}`;
+    list.appendChild(d);
+  });
+}
+
+// ══ INSIGHTS ══
+function renderInsights(){
+  renderConfChart();
+  renderWeeklyReport();
+  renderMotivation();
+  renderProductEffectiveness();
+  renderPhotoGallery();
+}
+
+function renderConfChart(){
+  const chart=document.getElementById('conf-chart');
+  const lbls=document.getElementById('conf-chart-lbls');
+  const last7=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    const e=entries.find(x=>x.date===ds);
+    last7.push({label:DAYS[d.getDay()],val:e?e.conf:null});
+  }
+  const max=10;
+  chart.innerHTML='';lbls.innerHTML='';
+  last7.forEach(({label,val})=>{
+    const col=document.createElement('div');
+    col.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;';
+    const bar=document.createElement('div');
+    bar.style.cssText=`width:100%;border-radius:3px 3px 0 0;min-height:3px;background:${val?'var(--accent)':'var(--border)'};opacity:${val?'.75':'1'};height:${val?(val/max*100)+'%':'4px'};`;
+    col.appendChild(bar);
+    chart.appendChild(col);
+    const l=document.createElement('div');
+    l.style.cssText='flex:1;text-align:center;font-size:9px;color:var(--faint);margin-top:3px;';
+    l.textContent=label;lbls.appendChild(l);
+  });
+  const vals=last7.filter(x=>x.val!==null).map(x=>x.val);
+  const sum=document.getElementById('conf-summary');
+  if(!vals.length){sum.textContent='Log your first day to see your confidence trends here.';return;}
+  const avg=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+  const trend=vals.length>1?vals[vals.length-1]-vals[0]:0;
+  let msg=`Your average confidence this week was <strong>${avg}/10</strong>. `;
+  if(trend>1)msg+=`📈 You're trending upward — great progress!`;
+  else if(trend<-1)msg+=`📉 Your confidence dipped this week. See the motivation section below for tips.`;
+  else msg+=`Your confidence has been relatively stable this week.`;
+  sum.innerHTML=msg;
+}
+
+function renderWeeklyReport(){
+  const el=document.getElementById('weekly-report');
+  if(!entries.length){el.innerHTML='<div class="empty">Log at least one day to see your report</div>';return;}
+  const last7=entries.filter(e=>{
+    const d=new Date(e.date+'T12:00:00');
+    return(new Date()-d)/(864e5)<=7;
+  });
+  if(!last7.length){el.innerHTML='<div class="empty">No entries in the last 7 days</div>';return;}
+  const amAvg=(last7.reduce((s,e)=>s+e.am.filter(Boolean).length,0)/last7.length).toFixed(1);
+  const pmAvg=(last7.reduce((s,e)=>s+e.pm.filter(Boolean).length,0)/last7.length).toFixed(1);
+  const confAvg=(last7.reduce((s,e)=>s+e.conf,0)/last7.length).toFixed(1);
+  const moods=last7.filter(e=>e.mood!==null).map(e=>e.mood);
+  const topMood=moods.length?MOODS[Math.round(moods.reduce((a,b)=>a+b,0)/moods.length)][1]:'—';
+  const skins=last7.filter(e=>e.skin!==null).map(e=>e.skin);
+  const topSkin=skins.length?SKIN[Math.round(skins.reduce((a,b)=>a+b,0)/skins.length)][1]:'—';
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="background:var(--s2);border-radius:var(--rs);padding:10px;text-align:center;"><div style="font-size:18px;font-family:'DM Serif Display',serif;">${confAvg}</div><div style="font-size:10px;color:var(--faint);">avg confidence</div></div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:10px;text-align:center;"><div style="font-size:18px;font-family:'DM Serif Display',serif;">${last7.length}</div><div style="font-size:10px;color:var(--faint);">days logged</div></div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:10px;text-align:center;"><div style="font-size:18px;">${amAvg}/3</div><div style="font-size:10px;color:var(--faint);">avg AM steps</div></div>
+      <div style="background:var(--s2);border-radius:var(--rs);padding:10px;text-align:center;"><div style="font-size:18px;">${pmAvg}/3</div><div style="font-size:10px;color:var(--faint);">avg PM steps</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Most common mood: <strong>${topMood}</strong> · Most common skin: <strong>${topSkin}</strong></div>`;
+}
+
+function renderMotivation(){
+  const el=document.getElementById('motivation-card');
+  const streak=getStreak();
+  const last7=entries.filter(e=>(new Date()-new Date(e.date+'T12:00:00'))/(864e5)<=7);
+  const confAvg=last7.length?(last7.reduce((s,e)=>s+e.conf,0)/last7.length):5;
+  let msgs=[];
+  if(streak>=7)msgs.push({e:'🌟',t:'Incredible consistency!',b:`You're on a ${streak}-day streak. Your skin is getting the daily love it deserves. Keep going — results compound over time.`});
+  else if(streak>=3)msgs.push({e:'🔥',t:'You\'re on a roll!',b:`${streak} days in a row! Consistency is the secret ingredient in skincare. You're building a habit that will change your skin.`});
+  else if(streak===0&&entries.length>0)msgs.push({e:'💪',t:'Get back on track',b:'Missing a day is okay — what matters is that you come back. Restart your streak today and your skin will thank you.'});
+  else msgs.push({e:'🌸',t:'You\'re just getting started',b:'Every expert was once a beginner. Start your routine today and in 4–6 weeks you\'ll start seeing real changes.'});
+  if(confAvg<5)msgs.push({e:'💕',t:'Low confidence days are normal',b:'Everyone has them. Focus on what you can control: stay hydrated, get enough sleep, and keep your routine consistent. You\'re doing the work — trust the process.'});
+  else if(confAvg>=8)msgs.push({e:'✨',t:'You\'re glowing — literally',b:'High confidence scores this week! That\'s the power of a consistent routine. Keep it up and share that energy.'});
+  const skinVals=last7.filter(e=>e.skin!==null).map(e=>e.skin);
+  const skinAvg=skinVals.length?(skinVals.reduce((a,b)=>a+b,0)/skinVals.length):3;
+  if(skinAvg<2)msgs.push({e:'🩺',t:'Your skin needs extra care',b:'Your recent logs show your skin has been struggling. Consider simplifying your routine, checking for product conflicts using the Tools tab, and staying well hydrated.'});
+  msgs.push({e:'🧴',t:'Skincare tip',b:tips[Math.floor(Math.random()*tips.length)]});
+  el.innerHTML=msgs.map(m=>`<div class="insight-card"><span class="insight-emoji">${m.e}</span><div class="insight-title">${m.t}</div><div class="insight-body">${m.b}</div></div>`).join('');
+}
+
+const tips=[
+  'Always apply SPF as the last step of your morning routine, even on cloudy days.',
+  'Apply hyaluronic acid to damp skin for maximum hydration effect.',
+  'Change your pillowcase at least once a week — bacteria and oils build up quickly.',
+  'Introduce new actives one at a time so you can identify what your skin loves (or hates).',
+  'Less is more — a simple 3-step routine done consistently beats a 10-step routine done occasionally.',
+  'Drinking 2L of water daily supports skin hydration from within.',
+  'Retinol results take 3–6 months of consistent use — patience is key.',
+  'Never skip SPF after using AHAs or retinol — your skin is more photosensitive.',
+  'The neck and décolletage age just as fast as the face — extend your routine there too.',
+  'Sleep is the ultimate skin treatment. 7–9 hours allows your skin to repair and regenerate.',
+  'Always patch test new products on your inner arm for 24–48 hours before applying to your face.',
+  'Vitamin C serums work best in the morning when they can fight free radicals from UV and pollution.',
+];
+
+function renderProductEffectiveness(){
+  const el=document.getElementById('product-effectiveness');
+  if(entries.length<7){el.innerHTML='<div class="insight-card"><span class="insight-emoji">📊</span><div class="insight-title">Not enough data yet</div><div class="insight-body">Log at least 7 days to see personalised product recommendations based on your skin trends.</div></div>';return;}
+  const last14=entries.filter(e=>(new Date()-new Date(e.date+'T12:00:00'))/(864e5)<=14);
+  const skinAvg=last14.filter(e=>e.skin!==null).length?(last14.filter(e=>e.skin!==null).reduce((s,e)=>s+e.skin,0)/last14.filter(e=>e.skin!==null).length):null;
+  let html='';
+  if(skinAvg!==null&&skinAvg<2){
+    html+=`<div class="insight-card"><span class="insight-emoji">⚠️</span><div class="insight-title">Your current routine may need a refresh</div><div class="insight-body">Your skin has been logging consistently low scores. Consider switching to gentler products. Try: <strong>CeraVe Hydrating Cleanser</strong>, <strong>La Roche-Posay Toleriane Moisturiser</strong>, and cutting out any active ingredients temporarily.</div></div>`;
+  } else if(skinAvg!==null&&skinAvg>=3.5){
+    html+=`<div class="insight-card"><span class="insight-emoji">💚</span><div class="insight-title">Your routine seems to be working!</div><div class="insight-body">Your skin scores have been positive recently. Keep your current routine consistent. Don't introduce too many new products at once — good things take time.</div></div>`;
+  } else {
+    html+=`<div class="insight-card"><span class="insight-emoji">🔬</span><div class="insight-title">Mixed results — let's optimise</div><div class="insight-body">Your skin has had some up and down days. Check the conflict checker in Tools to make sure your products work well together, and try the ingredient checker on anything new you've introduced.</div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ══ PHOTOS ══
+function handleDailyPhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const today=new Date().toISOString().split('T')[0];
+    const existing=skinPhotos.findIndex(p=>p.date===today);
+    const photo={date:today,src:e.target.result};
+    if(existing>=0)skinPhotos[existing]=photo;else skinPhotos.unshift(photo);
+    save('sm_photos',skinPhotos);
+    const preview=document.getElementById('daily-photo-preview');
+    preview.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--rs);">`;
+    pts+=5;save('sm_pts',pts);
+    checkBadges();renderRewards();
+    toast('📸 Photo saved! +5 pts');
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPhotoGallery(){
+  const grid=document.getElementById('photo-gallery');
+  grid.innerHTML='';
+  // Add button
+  const addEl=document.createElement('label');
+  addEl.style.cursor='pointer';
+  addEl.innerHTML=`<div class="photo-add">📷</div><input type="file" accept="image/*" capture="user" style="display:none" onchange="handleGalleryPhoto(this)">`;
+  grid.appendChild(addEl);
+  skinPhotos.slice(0,20).forEach(p=>{
+    const img=document.createElement('img');
+    img.className='photo-thumb';
+    img.src=p.src;
+    img.title=p.date;
+    grid.appendChild(img);
+  });
+}
+
+function handleGalleryPhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const today=new Date().toISOString().split('T')[0];
+    skinPhotos.unshift({date:today,src:e.target.result});
+    save('sm_photos',skinPhotos);
+    pts+=5;save('sm_pts',pts);
+    checkBadges();renderRewards();renderPhotoGallery();
+    toast('📸 Photo added! +5 pts');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ══ SKIN TYPE QUIZ ══
+let quizStep=0;
+function renderQuiz(){
+  const el=document.getElementById('quiz-area');
+  if(quizStep>=QUIZ.length){
+    // calculate type
+    const type=calcSkinType();
+    const prods=SKIN_TYPES[type]||[];
+    el.innerHTML=`
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-size:32px;margin-bottom:6px;">🌸</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px;">Your skin type is</div>
+        <div style="font-size:24px;font-weight:700;color:var(--accent);">${type}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Recommended products for your skin type:</div>
+      ${prods.map(p=>`<div style="background:var(--s2);border:.5px solid var(--border);border-radius:var(--rs);padding:10px;margin-bottom:6px;font-size:13px;">🧴 ${p}</div>`).join('')}
+      <button class="big-btn" style="margin-top:10px;" onclick="quizStep=0;quizAnswers=[];renderQuiz()">Retake quiz</button>`;
+    save('sm_skin_type',type);
+    return;
+  }
+  const q=QUIZ[quizStep];
+  el.innerHTML=`
+    <div style="font-size:12px;color:var(--faint);margin-bottom:6px;">Question ${quizStep+1} of ${QUIZ.length}</div>
+    <div style="font-size:14px;font-weight:500;margin-bottom:12px;">${q.q}</div>
+    ${q.opts.map((o,i)=>`<button class="quiz-opt${quizAnswers[quizStep]===i?' sel':''}" onclick="answerQuiz(${i})">${o}</button>`).join('')}`;
+}
+
+function answerQuiz(i){
+  quizAnswers[quizStep]=i;
+  quizStep++;
+  renderQuiz();
+}
+
+function calcSkinType(){
+  // map answers to skin type votes
+  const votes={Dry:0,Oily:0,Combination:0,Sensitive:0,Normal:0};
+  const maps=[
+    ['Dry','Normal','Oily','Combination','Sensitive'],
+    ['Normal','Normal','Oily','Combination','Sensitive'],
+    ['Dry','Normal','Oily','Combination','Sensitive'],
+    ['Dry','Normal','Oily','Combination','Sensitive'],
+  ];
+  quizAnswers.forEach((a,qi)=>{if(maps[qi])votes[maps[qi][a]]++;});
+  return Object.entries(votes).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+// ══ INGREDIENT CHECKER ══
+function handleIngredientPhoto(input){
+  const file=input.files[0];
+  if(!file)return;
+  toast('📷 Photo captured — please type the ingredients from the label into the text box to analyse them.');
+}
+
+function checkIngredients(){
+  save('sm_ingr_used',true);
+  pts+=5;save('sm_pts',pts);checkBadges();renderRewards();
+  const raw=document.getElementById('ingr-input').value.toLowerCase();
+  if(!raw.trim()){toast('Please paste or type an ingredient list first');return;}
+  const found=[];
+  Object.entries(IRRITANTS).forEach(([name,info])=>{
+    if(raw.includes(name.toLowerCase()))found.push({name,info});
+  });
+  const el=document.getElementById('ingr-results');
+  if(!found.length){
+    el.innerHTML='<div style="margin-top:10px;padding:12px;background:var(--okl);border-radius:var(--rs);font-size:13px;color:var(--ok);">✓ No major irritants detected in this ingredient list!</div>';
+    return;
+  }
+  const high=found.filter(f=>f.info.level==='high');
+  const med=found.filter(f=>f.info.level==='medium');
+  const low=found.filter(f=>f.info.level==='low');
+  el.innerHTML=`<div style="margin-top:12px;">
+    ${high.length?`<div style="font-size:11px;font-weight:500;color:#e53e3e;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;">🔴 High concern</div>${high.map(f=>`<div class="flag-row"><div class="flag-dot flag-red"></div><div><strong style="font-size:13px;">${f.name}</strong><div style="font-size:12px;color:var(--muted);margin-top:1px;">${f.info.reason}</div></div></div>`).join('')}`:''}
+    ${med.length?`<div style="font-size:11px;font-weight:500;color:#d69e2e;letter-spacing:.05em;text-transform:uppercase;margin:10px 0 6px;">🟡 Moderate concern</div>${med.map(f=>`<div class="flag-row"><div class="flag-dot flag-yellow"></div><div><strong style="font-size:13px;">${f.name}</strong><div style="font-size:12px;color:var(--muted);margin-top:1px;">${f.info.reason}</div></div></div>`).join('')}`:''}
+    ${low.length?`<div style="font-size:11px;font-weight:500;color:var(--faint);letter-spacing:.05em;text-transform:uppercase;margin:10px 0 6px;">⚪ Low concern</div>${low.map(f=>`<div class="flag-row"><div class="flag-dot" style="background:var(--faint);"></div><div><strong style="font-size:13px;">${f.name}</strong><div style="font-size:12px;color:var(--muted);margin-top:1px;">${f.info.reason}</div></div></div>`).join('')}`:''}
+  </div>`;
+}
+
+// ══ CONFLICT CHECKER ══
+function renderConflictSelect(){
+  const el=document.getElementById('conflict-select');
+  const allKeys=['retinol','vitamin c','glycolic acid','salicylic acid','niacinamide','lactic acid','benzoyl peroxide','aha','bha','hyaluronic acid','squalane','ceramides','peptides'];
+  el.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-bottom:7px;">Select ingredients you use together:</div><div style="display:flex;flex-wrap:wrap;gap:5px;">
+    ${allKeys.map(k=>`<button onclick="this.classList.toggle('on');this.style.background=this.classList.contains('on')?'var(--text)':'var(--s2)';this.style.color=this.classList.contains('on')?'var(--surface)':'var(--muted)';" data-ingr="${k}" style="padding:5px 10px;border:.5px solid var(--bmd);border-radius:20px;font-size:11px;font-weight:500;color:var(--muted);background:var(--s2);cursor:pointer;font-family:'DM Sans',sans-serif;">${k}</button>`).join('')}
+  </div>`;
+}
+
+function checkConflicts(){
+  const selected=[...document.querySelectorAll('#conflict-select button.on')].map(b=>b.dataset.ingr);
+  const el=document.getElementById('conflict-results');
+  if(selected.length<2){toast('Select at least 2 ingredients to check');return;}
+  const found=[];
+  CONFLICTS.forEach(c=>{
+    const aMatch=selected.some(s=>s.includes(c.a)||c.a.includes(s));
+    const bMatch=selected.some(s=>s.includes(c.b)||c.b.includes(s));
+    if(aMatch&&bMatch)found.push(c);
+  });
+  if(!found.length){
+    el.innerHTML='<div style="margin-top:10px;padding:12px;background:var(--okl);border-radius:var(--rs);font-size:13px;color:var(--ok);">✓ No major conflicts detected between your selected ingredients!</div>';
+    return;
+  }
+  el.innerHTML='<div style="margin-top:10px;">'+found.map(c=>{
+    const col=c.level==='high'?'#e53e3e':c.level==='medium'?'#d69e2e':'var(--faint)';
+    const icon=c.level==='high'?'🔴':c.level==='medium'?'🟡':'⚪';
+    return`<div class="conflict-item"><div style="font-size:11px;font-weight:500;color:${col};margin-bottom:5px;">${icon} ${c.level.toUpperCase()} CONFLICT</div><div style="font-size:13px;color:var(--text);line-height:1.5;">${c.msg}</div></div>`;
+  }).join('')+'</div>';
+}
+
+// ══ PRODUCTS ══
+const DB=[
+{id:'c001',name:'CeraVe Hydrating Cleanser',brand:'CeraVe',cat:'Cleanser',pros:['Ceramides restore skin barrier','Fragrance-free','Gentle for daily use','Great for dry/normal skin','Very affordable'],cons:['May not remove heavy makeup','Can feel filmy on oily skin']},
+{id:'c002',name:'CeraVe Foaming Facial Cleanser',brand:'CeraVe',cat:'Cleanser',pros:['Ideal for oily/combo skin','Removes excess oil','Niacinamide and ceramides','Fragrance-free'],cons:['Too drying for dry skin','Can over-strip if used twice daily']},
+{id:'c003',name:'La Roche-Posay Toleriane Hydrating Gentle Cleanser',brand:'La Roche-Posay',cat:'Cleanser',pros:['Ultra-gentle prebiotic formula','Restores microbiome','No fragrance or soap'],cons:['Pricey','May not fully remove heavy makeup']},
+{id:'c004',name:'La Roche-Posay Effaclar Purifying Foaming Gel',brand:'La Roche-Posay',cat:'Cleanser',pros:['Deep cleanses oily skin','Zinc pidolate controls sebum','Dermatologist tested'],cons:['Drying with overuse','Not for dry/sensitive skin']},
+{id:'c005',name:'Cetaphil Gentle Skin Cleanser',brand:'Cetaphil',cat:'Cleanser',pros:['Dermatologist recommended','Soap-free','Works on all skin types','Very affordable'],cons:['Can leave residue','Minimal cleansing power for heavy products']},
+{id:'c006',name:'Bioderma Sensibio H2O Micellar Water',brand:'Bioderma',cat:'Cleanser',pros:['No-rinse formula','Removes makeup and cleanses','Extremely gentle'],cons:['Not a replacement for a full cleanse','Can be expensive']},
+{id:'c007',name:'DHC Deep Cleansing Oil',brand:'DHC',cat:'Cleanser',pros:['Removes waterproof makeup','Nourishing olive oil base','Japanese skincare staple'],cons:['Expensive for an oil cleanser','Can feel greasy initially']},
+{id:'c008',name:'Vanicream Gentle Facial Cleanser',brand:'Vanicream',cat:'Cleanser',pros:['Free of dyes, fragrance, lanolin','Dermatologist recommended','Great for reactive skin','Very affordable'],cons:['Very basic formula','Minimal lather']},
+{id:'c009',name:'COSRX Low pH Good Morning Gel Cleanser',brand:'COSRX',cat:'Cleanser',pros:['Low pH preserves skin barrier','Tea tree oil for acne','Gentle lather','Affordable K-beauty'],cons:['Tea tree scent not for everyone','Can dry very dry skin']},
+{id:'c010',name:'Drunk Elephant Beste No. 9 Jelly Cleanser',brand:'Drunk Elephant',cat:'Cleanser',pros:['pH balanced','No silicones or fragrance','Glycerin rich','Gentle yet effective'],cons:['Very expensive','Tiny product amount']},
+{id:'m001',name:'CeraVe Moisturising Cream',brand:'CeraVe',cat:'Moisturiser',pros:['Ceramide complex restores barrier','Long-lasting hydration','Fragrance-free','Great for dry/eczema skin','Affordable'],cons:['Too heavy for oily skin','Thick jar packaging']},
+{id:'m002',name:'Neutrogena Hydro Boost Water Gel',brand:'Neutrogena',cat:'Moisturiser',pros:['Hyaluronic acid gel formula','Lightweight for oily skin','Non-comedogenic','Absorbs quickly','Affordable'],cons:['Not enough for very dry skin','Some fragrance ingredients']},
+{id:'m003',name:'La Roche-Posay Toleriane Double Repair Moisturiser',brand:'La Roche-Posay',cat:'Moisturiser',pros:['Prebiotic thermal water','Ceramides and niacinamide','Fragrance-free'],cons:['Can pill under makeup','Pricey']},
+{id:'m004',name:'Tatcha The Water Cream',brand:'Tatcha',cat:'Moisturiser',pros:['Oil-free lightweight texture','Pore refining','Leaves skin smooth'],cons:['Very expensive','Not enough for very dry skin']},
+{id:'m005',name:'Drunk Elephant Protini Polypeptide Cream',brand:'Drunk Elephant',cat:'Moisturiser',pros:['Peptides support collagen','No fragrance or essential oils'],cons:['Extremely expensive','Slow visible results']},
+{id:'m006',name:'The Ordinary Natural Moisturizing Factors + HA',brand:'The Ordinary',cat:'Moisturiser',pros:['Amino acids and hyaluronic acid','Very affordable','No fragrance'],cons:['Lightweight — not for very dry skin']},
+{id:'m007',name:'Hada Labo Gokujyun Premium Lotion',brand:'Hada Labo',cat:'Moisturiser',pros:['Multiple HA weights','Extremely hydrating','Fragrance-free','Cult Japanese favourite'],cons:['Not available everywhere']},
+{id:'m008',name:'First Aid Beauty Ultra Repair Cream',brand:'First Aid Beauty',cat:'Moisturiser',pros:['Colloidal oatmeal soothes eczema','Fragrance-free','Good for sensitive skin'],cons:['Expensive']},
+{id:'m009',name:'Belif The True Cream Aqua Bomb',brand:'Belif',cat:'Moisturiser',pros:['Cooling gel cream texture','Great for oily/combo skin'],cons:['Expensive','May not be enough for dry skin']},
+{id:'m010',name:'Dr. Jart+ Cicapair Tiger Grass Cream',brand:'Dr. Jart+',cat:'Moisturiser',pros:['Centella asiatica calms redness','Good for rosacea'],cons:['Expensive','Has fragrance']},
+{id:'s001',name:'The Ordinary Niacinamide 10% + Zinc 1%',brand:'The Ordinary',cat:'Serum',pros:['Minimises pores','Controls sebum','Brightens skin tone','Extremely affordable','Fragrance-free'],cons:['Can pill under other products','May cause purging initially']},
+{id:'s002',name:'The Ordinary Hyaluronic Acid 2% + B5',brand:'The Ordinary',cat:'Serum',pros:['Multiple HA weights','B5 repairs barrier','Very affordable','Fragrance-free'],cons:['Must apply to damp skin','Not moisturising alone']},
+{id:'s003',name:'Skinceuticals C E Ferulic',brand:'Skinceuticals',cat:'Serum',pros:['Gold standard Vitamin C','Proven antioxidant protection','Fades dark spots'],cons:['Extremely expensive','Hot-dog smell']},
+{id:'s004',name:'Estee Lauder Advanced Night Repair Serum',brand:'Estee Lauder',cat:'Serum',pros:['Chronolux repair technology','Boosts overnight hydration'],cons:['Expensive','Contains fragrance']},
+{id:'s005',name:'COSRX Advanced Snail 96 Mucin Power Essence',brand:'COSRX',cat:'Serum',pros:['96% snail mucin repairs skin','Hydrating and healing','Reduces redness','Affordable K-beauty'],cons:['Animal-derived ingredient concerns','Slightly sticky texture']},
+{id:'s006',name:'Paula\'s Choice 2% BHA Liquid Exfoliant',brand:'Paula\'s Choice',cat:'Serum',pros:['Salicylic acid unclogs pores','Reduces blackheads','Fragrance-free'],cons:['Pricey','Online only']},
+{id:'s007',name:'The Ordinary Buffet Multi-Technology Peptide Serum',brand:'The Ordinary',cat:'Serum',pros:['Multiple peptide technologies','Very affordable','Fragrance-free'],cons:['Slightly sticky texture','Modest results']},
+{id:'s008',name:'Skinceuticals Discoloration Defense',brand:'Skinceuticals',cat:'Serum',pros:['Tranexamic acid for hyperpigmentation','Clinical evidence','Fragrance-free'],cons:['Very expensive','Slow results']},
+{id:'s009',name:'The Ordinary Azelaic Acid Suspension 10%',brand:'The Ordinary',cat:'Serum',pros:['Azelaic acid for acne/rosacea','Brightens dark spots','Affordable'],cons:['Thick texture can pill']},
+{id:'s010',name:'Glow Recipe Watermelon Niacinamide Dew Drops',brand:'Glow Recipe',cat:'Serum',pros:['Niacinamide + HA','Dewy finish','Brightening','Vegan'],cons:['Very expensive','Fragrance included']},
+{id:'sp001',name:'La Roche-Posay Anthelios UVMune 400 SPF 50+',brand:'La Roche-Posay',cat:'Sunscreen',pros:['Broad spectrum','No white cast','Lightweight','Water resistant'],cons:['Expensive']},
+{id:'sp002',name:'EltaMD UV Clear Broad-Spectrum SPF 46',brand:'EltaMD',cat:'Sunscreen',pros:['Zinc oxide formula','Niacinamide included','Great for acne-prone','Fragrance-free'],cons:['Expensive','Slight cast on deeper tones']},
+{id:'sp003',name:'Biore UV Aqua Rich Watery Essence SPF 50+',brand:'Biore',cat:'Sunscreen',pros:['Japanese UV filters','No white cast','Lightweight','Affordable','Worldwide favourite'],cons:['Not easy to find everywhere']},
+{id:'sp004',name:'Neutrogena Ultra Sheer Dry-Touch SPF 50',brand:'Neutrogena',cat:'Sunscreen',pros:['Matte finish','Non-greasy','Widely available','Affordable'],cons:['Contains fragrance']},
+{id:'sp005',name:'Bondi Sands SPF 50 Fragrance Free Face Fluid',brand:'Bondi Sands',cat:'Sunscreen',pros:['Australian standard SPF','Lightweight','Fragrance-free','Affordable'],cons:['Slight white cast']},
+{id:'sp006',name:'Cancer Council SPF 50+ Face Day Wear',brand:'Cancer Council',cat:'Sunscreen',pros:['Australian made','High protection','Affordable','Widely available'],cons:['Some white cast']},
+{id:'sp007',name:'Altruist Dermatologist Sunscreen SPF 50',brand:'Altruist',cat:'Sunscreen',pros:['Extremely affordable','High protection','Dermatologist formulated'],cons:['Basic packaging']},
+{id:'t001',name:'Thayers Witch Hazel Toner',brand:'Thayers',cat:'Toner',pros:['Witch hazel tones skin','Aloe vera soothes','Affordable cult classic'],cons:['Contains rose fragrance']},
+{id:'t002',name:'Klairs Supple Preparation Unscented Toner',brand:'Klairs',cat:'Toner',pros:['Fragrance-free K-beauty toner','HA and beta-glucan','Gentle for sensitive skin'],cons:['Pricier for a toner']},
+{id:'t003',name:'Some By Mi AHA BHA PHA 30 Days Miracle Toner',brand:'Some By Mi',cat:'Toner',pros:['Triple acid exfoliation','Brightening','Acne-fighting','Budget K-beauty'],cons:['Not for sensitive skin']},
+{id:'t004',name:'La Roche-Posay Serozinc Toner',brand:'La Roche-Posay',cat:'Toner',pros:['Zinc sulfate tightens pores','Controls oiliness','Fragrance-free','Very affordable'],cons:['Not enough hydration for dry skin']},
+{id:'t005',name:'Pixi Glow Tonic',brand:'Pixi',cat:'Toner',pros:['5% glycolic acid','Affordable','Brightening effect'],cons:['Some fragrance']},
+{id:'e001',name:'Paula\'s Choice 2% BHA Liquid Exfoliant',brand:'Paula\'s Choice',cat:'Exfoliant',pros:['Salicylic acid exfoliates inside pores','Reduces blackheads','Fragrance-free'],cons:['Pricey','Online only']},
+{id:'e002',name:'The Ordinary Glycolic Acid 7% Toning Solution',brand:'The Ordinary',cat:'Exfoliant',pros:['7% glycolic acid','Very affordable','Brightening','Fragrance-free'],cons:['Can irritate if overused']},
+{id:'e003',name:'Alpha-H Liquid Gold',brand:'Alpha-H',cat:'Exfoliant',pros:['5% glycolic acid','Visible overnight results','Iconic Australian product'],cons:['Expensive','Contains fragrance']},
+{id:'e004',name:'COSRX BHA Blackhead Power Liquid',brand:'COSRX',cat:'Exfoliant',pros:['Betaine salicylate (gentler BHA)','Decongests pores','Affordable K-beauty','Fragrance-free'],cons:['Milder than Paula\'s Choice BHA']},
+{id:'r001',name:'Differin Adapalene Gel 0.1%',brand:'Differin',cat:'Retinol',pros:['Prescription-strength OTC in USA','Proven for acne and anti-aging','Affordable'],cons:['Initial purging','Not OTC in all countries']},
+{id:'r002',name:'The Ordinary Granactive Retinoid 2% Emulsion',brand:'The Ordinary',cat:'Retinol',pros:['Gentler retinoid alternative','Less irritating than retinol','Very affordable'],cons:['Less effective than true retinol']},
+{id:'r003',name:'Medik8 Crystal Retinal 1',brand:'Medik8',cat:'Retinol',pros:['Retinaldehyde more effective than retinol','Gentler than prescription','Fragrance-free'],cons:['Expensive']},
+{id:'r004',name:'CeraVe Resurfacing Retinol Serum',brand:'CeraVe',cat:'Retinol',pros:['Encapsulated retinol','Ceramides protect barrier','Niacinamide included','Affordable','Fragrance-free'],cons:['Lower retinol concentration']},
+{id:'r005',name:'Dermatica Prescription Tretinoin Cream',brand:'Dermatica',cat:'Retinol',pros:['Prescription-strength tretinoin','Most evidence-based anti-aging ingredient','Dermatologist supervised'],cons:['Requires subscription','Initial irritation/peeling']},
+{id:'fo001',name:'The Ordinary 100% Cold-Pressed Rose Hip Seed Oil',brand:'The Ordinary',cat:'Face Oil',pros:['Vitamin A rich','Fades scars and dark spots','Very affordable','Vegan'],cons:['Can oxidise quickly','Not for acne-prone skin']},
+{id:'fo002',name:'Biossance 100% Squalane Oil',brand:'Biossance',cat:'Face Oil',pros:['Plant-derived squalane','Non-comedogenic','Lightweight','Fragrance-free'],cons:['Expensive']},
+{id:'fo003',name:'Trilogy Certified Organic Rosehip Oil',brand:'Trilogy',cat:'Face Oil',pros:['High quality certified organic','Reduces scars','Available at Priceline'],cons:['Natural rosehip smell','Not for oily skin']},
+{id:'fmask001',name:'Aztec Secret Indian Healing Clay',brand:'Aztec Secret',cat:'Face Mask',pros:['100% natural clay','Deep pore cleanse','Very affordable'],cons:['Drying if left too long','Messy to prepare']},
+{id:'fmask002',name:'Laneige Water Sleeping Mask',brand:'Laneige',cat:'Face Mask',pros:['Overnight hydration','Wake up with plump skin','Cult K-beauty'],cons:['Expensive','Has fragrance']},
+{id:'lip001',name:'Laneige Lip Sleeping Mask',brand:'Laneige',cat:'Lip Care',pros:['Overnight lip hydration','Cult K-beauty lip treatment'],cons:['Expensive for lip care']},
+{id:'lip002',name:'Aquaphor Healing Ointment',brand:'Eucerin',cat:'Lip Care',pros:['Occlusive barrier heals chapped lips','Fragrance-free','Affordable'],cons:['Greasy texture']},
+];
+
+function getAllProducts(){return[...DB,...userProducts.map(p=>({...p,custom:true}))];}
+function getCategories(){const cats=[...new Set(getAllProducts().map(p=>p.cat||p.category))].sort();return['All',...cats];}
 
 function renderFilterBtns(){
   const cats=getCategories();
@@ -584,7 +982,7 @@ function renderFilterBtns(){
   el.innerHTML='';
   cats.forEach(cat=>{
     const b=document.createElement('button');
-    b.className='filter-btn'+(activeFilter===cat?' active':'');
+    b.className='fb'+(activeFilter===cat?' active':'');
     b.textContent=cat;
     b.onclick=()=>{activeFilter=cat;renderFilterBtns();renderProducts();};
     el.appendChild(b);
@@ -596,50 +994,28 @@ function renderProducts(){
   const all=getAllProducts();
   const filtered=all.filter(p=>{
     const cat=p.cat||p.category;
-    const matchCat=activeFilter==='All'||cat===activeFilter;
-    const matchQ=!query||p.name.toLowerCase().includes(query)||(p.brand||'').toLowerCase().includes(query)||cat.toLowerCase().includes(query);
-    return matchCat&&matchQ;
+    return(activeFilter==='All'||cat===activeFilter)&&(!query||p.name.toLowerCase().includes(query)||(p.brand||'').toLowerCase().includes(query));
   });
   document.getElementById('prod-count').textContent=filtered.length+' of '+all.length+' products';
   const list=document.getElementById('prod-list');
-  if(!filtered.length){list.innerHTML='<div class="empty">No products match your search</div>';return;}
+  if(!filtered.length){list.innerHTML='<div class="empty">No products match</div>';return;}
   list.innerHTML='';
   filtered.forEach(p=>{
     const cat=p.cat||p.category;
-    const el=document.createElement('div');
-    el.className='prod-item';
-    el.id='prod-'+p.id;
-    const prosHtml=(p.pros||[]).filter(x=>x).map(x=>`<li>${x}</li>`).join('')||'<li style="color:var(--text-faint)">None listed</li>';
-    const consHtml=(p.cons||[]).filter(x=>x).map(x=>`<li>${x}</li>`).join('')||'<li style="color:var(--text-faint)">None listed</li>';
-    const notesHtml=p.notes?`<div class="prod-section-label">Notes</div><div style="font-size:13px;color:var(--text-muted);padding:2px 0">${p.notes}</div>`:'';
-    const actionsHtml=p.custom?`<div class="prod-actions"><button class="prod-edit-btn" onclick="openModal('${p.id}')">Edit</button><button class="prod-del-btn" onclick="deleteProduct('${p.id}')">Delete</button></div>`:'';
-    const customTag=p.custom?'<span class="custom-tag">Custom</span>':'';
-    el.innerHTML=`
-      <div class="prod-header" onclick="toggleProd('${p.id}')">
-        <div class="prod-header-left">
-          <div class="prod-name">${p.name}${customTag}</div>
-          <div class="prod-meta">${p.brand?p.brand+' · ':''}${cat}</div>
-        </div>
-        <span class="prod-chevron">▼</span>
-      </div>
-      <div class="prod-body">
-        <div class="prod-section-label">Pros</div>
-        <ul class="pro-con-list pros">${prosHtml}</ul>
-        <div class="prod-section-label">Cons</div>
-        <ul class="pro-con-list cons">${consHtml}</ul>
-        ${notesHtml}
-        ${actionsHtml}
-      </div>`;
+    const el=document.createElement('div');el.className='pi';el.id='pi-'+p.id;
+    const pros=(p.pros||[]).map(x=>`<li>${x}</li>`).join('')||'<li style="color:var(--faint)">None listed</li>';
+    const cons=(p.cons||[]).map(x=>`<li>${x}</li>`).join('')||'<li style="color:var(--faint)">None listed</li>';
+    const acts=p.custom?`<div class="pacts"><button class="pedt" onclick="openModal('${p.id}')">Edit</button><button class="pdel" onclick="delProduct('${p.id}')">Delete</button></div>`:'';
+    el.innerHTML=`<div class="ph" onclick="toggleP('${p.id}')"><div class="phl"><div class="pname">${p.name}${p.custom?'<span class="ctag">Custom</span>':''}</div><div class="pmeta">${p.brand?p.brand+' · ':''}${cat}</div></div><span class="pchev">▼</span></div><div class="pb"><div class="psl">Pros</div><ul class="pcl pros">${pros}</ul><div class="psl">Cons</div><ul class="pcl cons">${cons}</ul>${p.notes?`<div class="psl">Notes</div><div style="font-size:12px;color:var(--muted);">${p.notes}</div>`:''}${acts}</div>`;
     list.appendChild(el);
   });
 }
 
-function toggleProd(id){const el=document.getElementById('prod-'+id);if(el)el.classList.toggle('open');}
+function toggleP(id){const el=document.getElementById('pi-'+id);if(el)el.classList.toggle('open');}
 
-function deleteProduct(id){
+function delProduct(id){
   if(!confirm('Remove this product?'))return;
-  userProducts=userProducts.filter(p=>p.id!==id);
-  saveUserProducts();renderFilterBtns();renderProducts();
+  userProducts=userProducts.filter(p=>p.id!==id);save('sm_products',userProducts);renderFilterBtns();renderProducts();
 }
 
 function openModal(editId){
@@ -647,22 +1023,8 @@ function openModal(editId){
   document.getElementById('modal-title').textContent=editId?'Edit product':'Add custom product';
   if(editId){
     const p=userProducts.find(x=>x.id===editId);
-    if(p){
-      document.getElementById('m-name').value=p.name;
-      document.getElementById('m-brand').value=p.brand||'';
-      document.getElementById('m-cat').value=p.category||p.cat;
-      document.getElementById('m-pros').value=(p.pros||[]).join('\n');
-      document.getElementById('m-cons').value=(p.cons||[]).join('\n');
-      document.getElementById('m-notes').value=p.notes||'';
-    }
-  }else{
-    document.getElementById('m-name').value='';
-    document.getElementById('m-brand').value='';
-    document.getElementById('m-cat').value='Moisturiser';
-    document.getElementById('m-pros').value='';
-    document.getElementById('m-cons').value='';
-    document.getElementById('m-notes').value='';
-  }
+    if(p){document.getElementById('m-name').value=p.name;document.getElementById('m-brand').value=p.brand||'';document.getElementById('m-cat').value=p.cat||p.category||'Moisturiser';document.getElementById('m-pros').value=(p.pros||[]).join('\n');document.getElementById('m-cons').value=(p.cons||[]).join('\n');document.getElementById('m-notes').value=p.notes||'';}
+  }else{['m-name','m-brand','m-pros','m-cons','m-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('m-cat').value='Moisturiser';}
   document.getElementById('modal-backdrop').classList.add('open');
 }
 
@@ -671,219 +1033,189 @@ function closeModal(){document.getElementById('modal-backdrop').classList.remove
 function saveProduct(){
   const name=document.getElementById('m-name').value.trim();
   if(!name){alert('Please enter a product name');return;}
-  const pros=document.getElementById('m-pros').value.split('\n').map(x=>x.trim()).filter(Boolean);
-  const cons=document.getElementById('m-cons').value.split('\n').map(x=>x.trim()).filter(Boolean);
-  const prod={
-    id:editingId||('u'+Date.now()),
-    name,brand:document.getElementById('m-brand').value.trim(),
-    cat:document.getElementById('m-cat').value,
-    category:document.getElementById('m-cat').value,
-    pros,cons,
-    notes:document.getElementById('m-notes').value.trim(),
-    custom:true
-  };
-  if(editingId){const idx=userProducts.findIndex(x=>x.id===editingId);if(idx>=0)userProducts[idx]=prod;}
-  else userProducts.push(prod);
-  saveUserProducts();renderFilterBtns();renderProducts();closeModal();
+  const prod={id:editingId||('u'+Date.now()),name,brand:document.getElementById('m-brand').value.trim(),cat:document.getElementById('m-cat').value,category:document.getElementById('m-cat').value,pros:document.getElementById('m-pros').value.split('\n').map(x=>x.trim()).filter(Boolean),cons:document.getElementById('m-cons').value.split('\n').map(x=>x.trim()).filter(Boolean),notes:document.getElementById('m-notes').value.trim(),custom:true};
+  if(editingId){const idx=userProducts.findIndex(x=>x.id===editingId);if(idx>=0)userProducts[idx]=prod;}else userProducts.push(prod);
+  save('sm_products',userProducts);pts+=10;save('sm_pts',pts);checkBadges();renderRewards();renderFilterBtns();renderProducts();closeModal();toast('Product saved! +10 pts');
 }
 
-function switchTab(tab){
-  const tabs=document.querySelectorAll('.tab');
-  tabs[0].classList.toggle('active',tab==='today');
-  tabs[1].classList.toggle('active',tab==='products');
-  tabs[2].classList.toggle('active',tab==='reminders');
-  tabs[3].classList.toggle('active',tab==='log');
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');
-  document.getElementById('save-btn').style.display=tab==='today'?'block':'none';
-  if(tab==='log')renderLog();
-  if(tab==='products'){renderFilterBtns();renderProducts();}
-  if(tab==='reminders'){renderReminderPage();renderReminderList();}
+// ══ SHOPPING LIST ══
+function renderShopList(){
+  const el=document.getElementById('shop-list');
+  if(!shopList.length){el.innerHTML='<div class="empty">Your shopping list is empty</div>';return;}
+  el.innerHTML='';
+  shopList.forEach((item,i)=>{
+    const d=document.createElement('div');d.className='shop-item';
+    d.innerHTML=`<div class="shop-cb${item.done?' done':''}" onclick="toggleShop(${i})">${item.done?'<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><span class="shop-name${item.done?' done':''}">${item.name}</span><button onclick="removeShop(${i})" style="padding:4px 8px;border:none;background:var(--alight);color:var(--accent);border-radius:12px;font-size:11px;cursor:pointer;">✕</button>`;
+    el.appendChild(d);
+  });
 }
 
-// ── REMINDERS ──
-const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-let reminders=[];
-let reminderTimers=[];
-try{reminders=JSON.parse(localStorage.getItem('skinmind_reminders')||'[]');}catch(e){}
+function addShopItem(){
+  const input=document.getElementById('shop-input');
+  const name=input.value.trim();
+  if(!name)return;
+  shopList.push({name,done:false});
+  save('sm_shop',shopList);
+  input.value='';
+  pts+=2;save('sm_pts',pts);checkBadges();renderRewards();renderShopList();
+  toast('Added to shopping list! +2 pts');
+}
 
-function saveReminders(){try{localStorage.setItem('skinmind_reminders',JSON.stringify(reminders));}catch(e){}}
+function toggleShop(i){shopList[i].done=!shopList[i].done;save('sm_shop',shopList);renderShopList();}
+function removeShop(i){shopList.splice(i,1);save('sm_shop',shopList);renderShopList();}
 
-function renderReminderPage(){
-  // days row
-  const row=document.getElementById('r-days-row');
-  if(!row.children.length){
-    DAYS.forEach((d,i)=>{
-      const b=document.createElement('button');
-      b.id='rd-'+i;
-      b.textContent=d;
-      b.style.cssText='padding:6px 10px;border:0.5px solid var(--border-md);border-radius:20px;font-size:12px;font-weight:500;color:var(--text-muted);background:var(--surface-2);cursor:pointer;font-family:"DM Sans",sans-serif;transition:all 0.15s;';
-      b.onclick=()=>{
-        b.dataset.on=b.dataset.on==='1'?'0':'1';
-        b.style.background=b.dataset.on==='1'?'var(--text)':'var(--surface-2)';
-        b.style.color=b.dataset.on==='1'?'var(--surface)':'var(--text-muted)';
-        b.style.borderColor=b.dataset.on==='1'?'var(--text)':'var(--border-md)';
-      };
-      row.appendChild(b);
-    });
+// ══ REWARDS ══
+function checkBadges(){
+  let newBadge=false;
+  BADGES.forEach(b=>{
+    const key='sm_badge_'+b.id;
+    if(!load(key,false)&&b.check()){
+      save(key,true);
+      pts+=20;save('sm_pts',pts);
+      toast('🏅 Badge unlocked: '+b.name+' +20 pts!');
+      newBadge=true;
+    }
+  });
+}
+
+function renderRewards(){
+  // points
+  document.getElementById('pts-display').textContent=pts;
+  const nextMs=MILESTONES.find(m=>m.pts>pts);
+  const prevMs=[...MILESTONES].reverse().find(m=>m.pts<=pts);
+  if(nextMs){
+    const pct=prevMs?((pts-prevMs.pts)/(nextMs.pts-prevMs.pts)*100):((pts/nextMs.pts)*100);
+    document.getElementById('pts-fill').style.width=Math.min(100,pct)+'%';
+    document.getElementById('pts-next').textContent=`${nextMs.pts-pts} pts to ${nextMs.name}`;
+  } else {
+    document.getElementById('pts-fill').style.width='100%';
+    document.getElementById('pts-next').textContent='Maximum milestone reached! 👑';
   }
-  // notification status
-  updateNotifUI();
+  // badges
+  const bg=document.getElementById('badge-grid');
+  bg.innerHTML='';
+  BADGES.forEach(b=>{
+    const earned=load('sm_badge_'+b.id,false);
+    const el=document.createElement('div');
+    el.className='badge-item'+(earned?' earned':'');
+    el.innerHTML=`<span class="badge-icon">${b.icon}</span><div class="badge-name">${b.name}</div><div style="font-size:9px;color:var(--faint);margin-top:2px;">${b.desc}</div>`;
+    el.title=b.desc;
+    bg.appendChild(el);
+  });
+  // milestones
+  const ml=document.getElementById('milestone-list');
+  ml.innerHTML='';
+  MILESTONES.forEach(m=>{
+    const done=pts>=m.pts;
+    const el=document.createElement('div');
+    el.className='milestone-row';
+    el.innerHTML=`<div class="ms-icon">${m.icon}</div><div class="ms-info"><div class="ms-name">${m.name}</div><div class="ms-desc">${m.desc}</div></div>${done?'<div class="ms-done">✓ Done</div>':'<div style="font-size:11px;color:var(--faint);">${m.pts} pts</div>'}`;
+    ml.appendChild(el);
+  });
+}
+
+// ══ REMINDERS ══
+function renderReminderDays(){
+  const el=document.getElementById('r-days');
+  if(el.children.length)return;
+  DAYS.forEach((d,i)=>{
+    const b=document.createElement('button');
+    b.className='day-btn';b.textContent=d;b.dataset.on='0';
+    b.onclick=()=>{b.dataset.on=b.dataset.on==='1'?'0':'1';b.classList.toggle('on',b.dataset.on==='1');};
+    el.appendChild(b);
+  });
+}
+
+function requestNotif(){
+  if(!('Notification' in window)){document.getElementById('notif-status').textContent='Your browser does not support notifications.';return;}
+  Notification.requestPermission().then(updateNotifUI);
 }
 
 function updateNotifUI(){
   const status=document.getElementById('notif-status');
-  const btn=document.getElementById('notif-enable-btn');
-  const banner=document.getElementById('notif-permission-banner');
-  if(!('Notification' in window)){
-    status.textContent='Your browser does not support notifications.';
-    btn.style.display='none';
-    return;
-  }
-  if(Notification.permission==='granted'){
-    status.textContent='✓ Notifications enabled';
-    btn.style.display='none';
-    banner.style.display='none';
-  } else if(Notification.permission==='denied'){
-    status.textContent='';
-    btn.style.display='none';
-    banner.style.display='block';
-    banner.textContent='Notifications are blocked. To enable them, click the 🔒 lock icon in your browser\'s address bar, set Notifications to "Allow", then reload the page.';
-  } else {
-    status.textContent='Tap the button above to allow notifications.';
-    btn.style.display='block';
-    banner.style.display='none';
-  }
+  const btn=document.getElementById('notif-btn');
+  const banner=document.getElementById('notif-banner');
+  if(!('Notification' in window)){status.textContent='Notifications not supported.';btn.style.display='none';return;}
+  if(Notification.permission==='granted'){status.textContent='✓ Notifications enabled';btn.style.display='none';banner.style.display='none';scheduleAll();}
+  else if(Notification.permission==='denied'){btn.style.display='none';banner.style.display='block';banner.textContent='Notifications are blocked. Click the 🔒 lock icon in your browser\'s address bar, set Notifications to "Allow", then reload the page.';}
+  else{status.textContent='Tap the button above to allow notifications.';btn.style.display='block';banner.style.display='none';}
 }
 
-function requestNotifPermission(){
-  if(!('Notification' in window)) return;
-  Notification.requestPermission().then(()=>{
-    updateNotifUI();
-    if(Notification.permission==='granted') scheduleAll();
-  });
-}
-
-function toggleCustomInput(){
-  const sel=document.getElementById('r-routine');
-  document.getElementById('r-custom-wrap').style.display=sel.value==='Custom'?'block':'none';
-}
+function toggleCustom(){document.getElementById('r-custom-wrap').style.display=document.getElementById('r-routine').value==='Custom...'?'block':'none';}
 
 function addReminder(){
-  const sel=document.getElementById('r-routine');
-  const label=sel.value==='Custom'?(document.getElementById('r-custom').value.trim()||'Reminder'):sel.value;
+  const sel=document.getElementById('r-routine').value;
+  const label=sel==='Custom...'?(document.getElementById('r-custom').value.trim()||'Reminder'):sel;
   const time=document.getElementById('r-time').value;
-  if(!time){alert('Please set a time.');return;}
-  const days=DAYS.map((_,i)=>document.getElementById('rd-'+i)?.dataset.on==='1');
+  if(!time){toast('Please set a time');return;}
+  const days=DAYS.map((_,i)=>document.querySelector(`#r-days .day-btn:nth-child(${i+1})`)?.dataset.on==='1');
   const everyDay=days.every(d=>!d);
   const r={id:'rem'+Date.now(),label,time,days:everyDay?DAYS.map(()=>true):days,enabled:true};
-  reminders.push(r);
-  saveReminders();
-  scheduleAll();
-  renderReminderList();
-  // reset day buttons
-  DAYS.forEach((_,i)=>{
-    const b=document.getElementById('rd-'+i);
-    if(b){b.dataset.on='0';b.style.background='var(--surface-2)';b.style.color='var(--text-muted)';b.style.borderColor='var(--border-md)';}
-  });
+  reminders.push(r);save('sm_reminders',reminders);scheduleAll();renderReminders();
+  DAYS.forEach((_,i)=>{const b=document.querySelector(`#r-days .day-btn:nth-child(${i+1})`);if(b){b.dataset.on='0';b.classList.remove('on');}});
   document.getElementById('r-custom').value='';
-  sel.value='Morning routine';
-  toggleCustomInput();
+  toast('Reminder set!');
 }
 
-function deleteReminder(id){
-  reminders=reminders.filter(r=>r.id!==id);
-  saveReminders();scheduleAll();renderReminderList();
-}
-
-function toggleReminder(id){
-  const r=reminders.find(x=>x.id===id);
-  if(r){r.enabled=!r.enabled;saveReminders();scheduleAll();renderReminderList();}
-}
-
-function renderReminderList(){
-  const list=document.getElementById('reminder-list');
-  if(!reminders.length){list.innerHTML='<div class="empty">No reminders set yet</div>';return;}
-  list.innerHTML='';
+function renderReminders(){
+  const el=document.getElementById('rem-list');
+  if(!reminders.length){el.innerHTML='<div class="empty">No reminders set</div>';return;}
+  el.innerHTML='';
   reminders.forEach(r=>{
-    const el=document.createElement('div');
-    el.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--border);gap:10px;';
-    const activeDays=DAYS.filter((_,i)=>r.days[i]);
-    const dayStr=activeDays.length===7?'Every day':activeDays.join(', ');
-    const [hh,mm]=r.time.split(':');
-    const h=parseInt(hh);
-    const ampm=h>=12?'PM':'AM';
-    const h12=h===0?12:h>12?h-12:h;
-    const timeStr=`${h12}:${mm} ${ampm}`;
-    el.innerHTML=`
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:15px;font-weight:500;color:${r.enabled?'var(--text)':'var(--text-faint)'};">${r.label}</div>
-        <div style="font-size:12px;color:var(--text-faint);margin-top:2px;">${timeStr} · ${dayStr}</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
-        <button onclick="toggleReminder('${r.id}')" style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:0.5px solid var(--border-md);background:${r.enabled?'var(--text)':'var(--surface-2)'};color:${r.enabled?'var(--surface)':'var(--text-muted)'};">${r.enabled?'On':'Off'}</button>
-        <button onclick="deleteReminder('${r.id}')" style="padding:6px 10px;border-radius:20px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;background:var(--accent-light);color:var(--accent);">✕</button>
-      </div>`;
-    list.appendChild(el);
+    const [hh,mm]=r.time.split(':');const h=parseInt(hh);const ampm=h>=12?'PM':'AM';const h12=h===0?12:h>12?h-12:h;
+    const active=r.days.map((on,i)=>on?DAYS[i]:null).filter(Boolean);
+    const d=document.createElement('div');d.className='rem-item';
+    d.innerHTML=`<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:500;">${r.label}</div><div style="font-size:11px;color:var(--faint);margin-top:1px;">${h12}:${mm} ${ampm} · ${active.length===7?'Every day':active.join(', ')}</div></div><button onclick="toggleRem('${r.id}')" style="padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:.5px solid var(--bmd);background:${r.enabled?'var(--text)':'var(--s2)'};color:${r.enabled?'var(--surface)':'var(--muted)'};">${r.enabled?'On':'Off'}</button><button onclick="delRem('${r.id}')" style="padding:5px 8px;border:none;background:var(--alight);color:var(--accent);border-radius:20px;font-size:11px;cursor:pointer;">✕</button>`;
+    el.appendChild(d);
   });
-  // remove last border
-  if(list.lastChild) list.lastChild.style.borderBottom='none';
 }
+
+function toggleRem(id){const r=reminders.find(x=>x.id===id);if(r){r.enabled=!r.enabled;save('sm_reminders',reminders);scheduleAll();renderReminders();}}
+function delRem(id){reminders=reminders.filter(r=>r.id!==id);save('sm_reminders',reminders);scheduleAll();renderReminders();}
 
 function scheduleAll(){
-  reminderTimers.forEach(t=>clearTimeout(t));
-  reminderTimers=[];
-  if(Notification.permission!=='granted') return;
+  rTimers.forEach(t=>clearTimeout(t));rTimers=[];
+  if(Notification.permission!=='granted')return;
   reminders.filter(r=>r.enabled).forEach(r=>{
-    scheduleSingle(r);
+    (function schedule(){
+      const now=new Date();const[hh,mm]=r.time.split(':');
+      const next=new Date();next.setHours(parseInt(hh),parseInt(mm),0,0);
+      if(next<=now)next.setDate(next.getDate()+1);
+      for(let i=0;i<7;i++){if(r.days[next.getDay()])break;next.setDate(next.getDate()+1);}
+      const t=setTimeout(()=>{new Notification('Skin & Mind 🌸',{body:r.label});schedule();},next-now);
+      rTimers.push(t);
+    })();
   });
 }
 
-function scheduleSingle(r){
-  const now=new Date();
-  const [hh,mm]=r.time.split(':');
-  const next=new Date();
-  next.setHours(parseInt(hh),parseInt(mm),0,0);
-
-  function fireIfDay(date){
-    const dow=date.getDay();
-    return r.days[dow];
-  }
-
-  function schedule(){
-    const n=new Date();
-    n.setHours(parseInt(hh),parseInt(mm),0,0);
-    if(n<=new Date()) n.setDate(n.getDate()+1);
-    // find the next matching day
-    for(let i=0;i<7;i++){
-      if(fireIfDay(n)) break;
-      n.setDate(n.getDate()+1);
-    }
-    const delay=n-new Date();
-    const t=setTimeout(()=>{
-      new Notification('Skin & Mind 🌸',{
-        body:r.label,
-        icon:'',
-        badge:''
-      });
-      schedule(); // reschedule for next occurrence
-    },delay);
-    reminderTimers.push(t);
-  }
-  schedule();
+// ══ TABS ══
+function switchTab(tab){
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['today','insights','tools','rewards','more'][i]===tab);
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('save-btn').style.display=tab==='today'?'block':'none';
+  if(tab==='insights')renderInsights();
+  if(tab==='tools'){renderFilterBtns();renderProducts();renderConflictSelect();renderShopList();}
+  if(tab==='rewards')renderRewards();
+  if(tab==='more'){renderReminders();updateNotifUI();renderReminderDays();renderLog();}
 }
 
-// ── INIT ──
+// ══ INIT ══
+loadAll();
 document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
 document.getElementById('conf-slider').oninput=function(){state.conf=parseInt(this.value);document.getElementById('conf-val').textContent=this.value;renderConfDots();};
 document.getElementById('notes-input').oninput=function(){state.notes=this.value;};
 document.getElementById('modal-backdrop').onclick=function(e){if(e.target===this)closeModal();};
+document.getElementById('shop-input').addEventListener('keydown',e=>{if(e.key==='Enter')addShopItem();});
 
 renderSteps(AM_STEPS,state.am,'am','am-fill','am-text');
 renderSteps(PM_STEPS,state.pm,'pm','pm-fill','pm-text');
-renderMoods();renderConfDots();renderLog();
-// Auto-schedule saved reminders on load
-if(Notification.permission==='granted') scheduleAll();
+renderMoods();renderConfDots();renderLog();renderRewards();
+renderQuiz();
+if(Notification.permission==='granted')scheduleAll();
+checkBadges();
 </script>
 </body>
 </html>
